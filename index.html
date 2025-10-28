@@ -7,6 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23c9a84a'/%3E%3Cstop offset='100%25' style='stop-color:%23e0c77b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='6' fill='%230b0f12'/%3E%3Crect x='4' y='4' width='24' height='24' rx='4' fill='url(%23a)'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='14' font-weight='bold' text-anchor='middle' fill='%230b0f12'%3ESN%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23c9a84a'/%3E%3Cstop offset='100%25' style='stop-color:%23e0c77b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='36' fill='%230b0f12'/%3E%3Crect x='20' y='20' width='140' height='140' rx='28' fill='url(%23a)'/%3E%3Ctext x='90' y='115' font-family='Arial,sans-serif' font-size='72' font-weight='bold' text-anchor='middle' fill='%230b0f12'%3ESN%3C/text%3E%3C/svg%3E">
 <link rel="manifest" href="data:application/json,{%22name%22:%22Train%20Alert%20Pro%22,%22short_name%22:%22TrainAlert%22,%22icons%22:[{%22src%22:%22data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22}],%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230b0f12%22,%22theme_color%22:%22%23c9a84a%22}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 :root{
   --bg-0:#0b0f12; --bg-1:#111417; --card:#121417;
@@ -47,6 +48,7 @@ body{position:relative}
 .title{font-weight:800;font-size:20px; background:var(--gradient-1); -webkit-background-clip:text; -webkit-text-fill-color:transparent}
 .subtitle{font-size:13px;color:var(--muted)}
 .layout{display:grid;grid-template-columns:360px 1fr;gap:14px;margin-top:12px;align-items:start}
+.layout.no-map{grid-template-columns:1fr} /* Layout without map */
 @media(max-width:1000px){ 
   .layout{grid-template-columns:1fr; grid-template-rows:1fr auto} 
   .left-col{order:1} 
@@ -150,7 +152,8 @@ body{position:relative}
 .station.active .dot::after{opacity:1}
 .station.next{border-style:dashed; border-color:var(--gold); background:rgba(201,168,74,0.05)}
 .station.next .dot{background:var(--gold-2); animation:glow 2s infinite}
-.right-col{border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01)); box-shadow:var(--shadow-1)}
+.right-col{border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01)); box-shadow:var(--shadow-1); display:none} /* Hide by default */
+.right-col.active{display:block} /* Show when active */
 .map{height:78vh; position:relative}
 .map::after{content:""; position:absolute; bottom:0; left:0; right:0; height:3px; background:var(--gradient-1)}
 .footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:var(--muted);font-size:13px; padding:10px; background:rgba(255,255,255,0.02); border-radius:10px}
@@ -304,6 +307,36 @@ body{position:relative}
     font-size: 11px;
   }
 }
+
+/* Map control button */
+.map-control {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: var(--gradient-1);
+  color: #07120b;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: var(--shadow-gold);
+  transition: var(--transition);
+}
+
+.map-control:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(201,168,74,0.3);
+}
+
+/* Map container improvements */
+.map-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -334,10 +367,11 @@ body{position:relative}
           <div class="status-indicator online" id="connectionStatus">متصل</div>
           <div class="small" id="notifStatus">حالة الإشعارات: غير معطلة</div>
           <button id="themeBtn" class="btn ghost" title="تبديل الوضع">وضع</button>
+          <button id="mapToggleBtn" class="btn ghost" title="إظهار/إخفاء الخريطة">🗺️ خريطة</button>
         </div>
       </div>
 
-      <div class="layout">
+      <div class="layout" id="layout">
         <div class="left-col" id="leftCol">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
@@ -386,8 +420,11 @@ body{position:relative}
           </div>
           <div id="timeline" class="timeline" aria-live="polite"></div>
         </div>
-        <div class="right-col">
-          <div id="map" class="map" role="region" aria-label="خريطة المسار"></div>
+        <div class="right-col" id="rightCol">
+          <div class="map-container">
+            <div id="map" class="map" role="region" aria-label="خريطة المسار"></div>
+            <button id="mapControlBtn" class="map-control">🗺️</button>
+          </div>
         </div>
       </div>
 
@@ -544,6 +581,7 @@ let notificationCount = 0;
 let backgroundSyncSupported = 'serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype;
 let tabId = Date.now().toString(); // Unique ID for this tab
 let isMainTab = false; // Flag to indicate if this is the main tracking tab
+let mapVisible = false; // Track map visibility state - default to false
 let trackingState = {
   active: false,
   startIdx: 0,
@@ -577,6 +615,10 @@ if ('BroadcastChannel' in window) {
           event.data.ts
         );
       }
+    } else if (event.data.type === 'MAP_VISIBILITY_UPDATE') {
+      // Update map visibility from another tab
+      mapVisible = event.data.visible;
+      updateMapVisibility();
     }
   };
 }
@@ -745,56 +787,126 @@ function stopRing(){
 
 /* Map init with performance optimizations */
 function initMap(){
-  map = L.map('map', { 
-    preferCanvas:true, 
-    zoomControl:true,
-    updateWhenZooming: false,
-    updateWhenIdle: true,
-    worldCopyJump: true
-  }).setView([STATIONS[Math.floor(STATIONS.length/2)].lat, STATIONS[Math.floor(STATIONS.length/2)].lng], 7);
+  if (!mapVisible) return; // Don't initialize map if not visible
   
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
-    maxZoom:19,
-    updateWhenIdle: true,
-    updateWhenZooming: false,
-    reuseTiles: true
-  }).addTo(map);
+  // Check if map container exists and is visible
+  const mapContainer = document.getElementById('map');
+  if (!mapContainer || mapContainer.offsetParent === null) {
+    console.log('Map container not visible, delaying initialization');
+    return;
+  }
   
-  const latlngs = STATIONS.map(s=>[s.lat,s.lng]);
-  routeLine = L.polyline(latlngs, { color: '#c9a84a', weight:4, opacity:0.95 }).addTo(map);
-  
-  // Use canvas markers for better performance
-  STATIONS.forEach((s,i)=> {
-    const marker = L.circleMarker([s.lat,s.lng], { 
-      radius:5, 
-      fillColor:'#c9a84a', 
+  try {
+    map = L.map('map', { 
+      preferCanvas:true, 
+      zoomControl:true,
+      updateWhenZooming: false,
+      updateWhenIdle: true,
+      worldCopyJump: true
+    }).setView([STATIONS[Math.floor(STATIONS.length/2)].lat, STATIONS[Math.floor(STATIONS.length/2)].lng], 7);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+      maxZoom:19,
+      updateWhenIdle: true,
+      updateWhenZooming: false,
+      reuseTiles: true
+    }).addTo(map);
+    
+    const latlngs = STATIONS.map(s=>[s.lat,s.lng]);
+    routeLine = L.polyline(latlngs, { color: '#c9a84a', weight:4, opacity:0.95 }).addTo(map);
+    
+    // Use canvas markers for better performance
+    STATIONS.forEach((s,i)=> {
+      const marker = L.circleMarker([s.lat,s.lng], { 
+        radius:5, 
+        fillColor:'#c9a84a', 
+        color:'#fff', 
+        weight:0, 
+        fillOpacity:1 
+      }).addTo(map);
+      
+      // Only bind tooltip to visible markers
+      if (i < 10 || i > STATIONS.length - 10) {
+        marker.bindTooltip(`${i+1}. ${s.name}`);
+      }
+    });
+    
+    trainMarker = L.marker([STATIONS[0].lat, STATIONS[0].lng], { title:'قطار' }).addTo(map);
+    userMarker = L.circleMarker([STATIONS[0].lat, STATIONS[0].lng], { 
+      radius:7, 
+      fillColor:'#ff5a5f', 
       color:'#fff', 
-      weight:0, 
+      weight:1, 
       fillOpacity:1 
     }).addTo(map);
     
-    // Only bind tooltip to visible markers
-    if (i < 10 || i > STATIONS.length - 10) {
-      marker.bindTooltip(`${i+1}. ${s.name}`);
+    map.fitBounds(latlngs);
+    
+    // Optimize map rendering
+    map._onResize = function() {
+      if (this._timer) clearTimeout(this._timer);
+      this._timer = setTimeout(L.bind(this._resetView, this), 100);
+    };
+    
+    console.log('Map initialized successfully');
+  } catch (error) {
+    console.error('Error initializing map:', error);
+    showToast('خطأ في تحميل الخريطة');
+  }
+}
+
+// Function to update map visibility
+function updateMapVisibility() {
+  const rightCol = document.getElementById('rightCol');
+  const layout = document.getElementById('layout');
+  const mapToggleBtn = document.getElementById('mapToggleBtn');
+  
+  if (mapVisible) {
+    rightCol.classList.add('active');
+    layout.classList.remove('no-map');
+    mapToggleBtn.textContent = '🗺️ إخفاء الخريطة';
+    
+    // Initialize map if not already initialized
+    if (!map) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        initMap();
+        // Refresh map when it becomes visible to fix rendering issues
+        if (map) {
+          setTimeout(() => {
+            map.invalidateSize();
+          }, 300);
+        }
+      }, 100);
+    } else {
+      // Refresh map when it becomes visible to fix rendering issues
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 300);
     }
-  });
+  } else {
+    rightCol.classList.remove('active');
+    layout.classList.add('no-map');
+    mapToggleBtn.textContent = '🗺️ إظهار الخريطة';
+  }
   
-  trainMarker = L.marker([STATIONS[0].lat, STATIONS[0].lng], { title:'قطار' }).addTo(map);
-  userMarker = L.circleMarker([STATIONS[0].lat, STATIONS[0].lng], { 
-    radius:7, 
-    fillColor:'#ff5a5f', 
-    color:'#fff', 
-    weight:1, 
-    fillOpacity:1 
-  }).addTo(map);
+  // Save preference
+  localStorage.setItem('mapVisible', mapVisible ? 'true' : 'false');
   
-  map.fitBounds(latlngs);
-  
-  // Optimize map rendering
-  map._onResize = function() {
-    if (this._timer) clearTimeout(this._timer);
-    this._timer = setTimeout(L.bind(this._resetView, this), 100);
-  };
+  // Broadcast to other tabs
+  if (broadcastChannel) {
+    broadcastChannel.postMessage({
+      type: 'MAP_VISIBILITY_UPDATE',
+      visible: mapVisible
+    });
+  }
+}
+
+// Toggle map visibility
+function toggleMapVisibility() {
+  mapVisible = !mapVisible;
+  updateMapVisibility();
+  showToast(mapVisible ? 'تم إظهار الخريطة' : 'تم إخفاء الخريطة');
 }
 
 // Throttled functions for better performance
@@ -812,17 +924,15 @@ function throttle(func, limit) {
 }
 
 function setUserMarker(lat,lng){ 
-  if(userMarker) userMarker.setLatLng([lat,lng]); 
-  else userMarker = L.circleMarker([lat,lng]).addTo(map); 
+  if(userMarker && map) userMarker.setLatLng([lat,lng]); 
 }
 function setTrainMarker(lat,lng){ 
-  if(trainMarker) trainMarker.setLatLng([lat,lng]); 
-  else trainMarker = L.marker([lat,lng]).addTo(map); 
+  if(trainMarker && map) trainMarker.setLatLng([lat,lng]); 
 }
 
 // Throttled panTo for better performance
 const panTo = throttle(function(lat,lng){ 
-  if (map) {
+  if (map && mapVisible) {
     map.panTo([lat,lng]);
   }
 }, 200);
@@ -851,7 +961,7 @@ function buildRoute(){
   
   renderTimeline();
   const latlngs = routeIndices.map(i=>[STATIONS[i].lat, STATIONS[i].lng]);
-  if(latlngs.length) map.fitBounds(latlngs, { padding:[60,60] });
+  if(latlngs.length && map && mapVisible) map.fitBounds(latlngs, { padding:[60,60] });
   document.getElementById('routeInfo').textContent = `المسار: ${STATIONS[start].name} → ${STATIONS[dest].name} · محطات: ${routeIndices.length}`;
   
   // Update worker with new route
@@ -1279,6 +1389,12 @@ document.getElementById('themeBtn').addEventListener('click', ()=>{
   localStorage.setItem('theme', cur === 'light' ? 'dark' : 'light');
 });
 
+// Map toggle button
+document.getElementById('mapToggleBtn').addEventListener('click', toggleMapVisibility);
+
+// Map control button (inside the map)
+document.getElementById('mapControlBtn').addEventListener('click', toggleMapVisibility);
+
 document.getElementById('startSelect').addEventListener('change', buildRoute);
 document.getElementById('destSelect').addEventListener('change', buildRoute);
 
@@ -1376,6 +1492,12 @@ document.getElementById('floatingBtn').addEventListener('click', () => {
         <span>تفعيل الإشعارات</span>
       </label>
     </div>
+    <div style="margin-bottom: 10px">
+      <label style="display: flex; align-items: center; gap: 8px">
+        <input type="checkbox" id="mapEnabled" ${mapVisible ? 'checked' : ''}>
+        <span>إظهار الخريطة</span>
+      </label>
+    </div>
     <button id="closeSettings" class="btn" style="width: 100%">إغلاق</button>
   `;
   
@@ -1396,6 +1518,13 @@ document.getElementById('floatingBtn').addEventListener('click', () => {
   
   document.getElementById('notificationsEnabled').addEventListener('change', (e) => {
     localStorage.setItem('notificationsEnabled', e.target.checked);
+  });
+  
+  // Map visibility toggle
+  document.getElementById('mapEnabled').addEventListener('change', (e) => {
+    mapVisible = e.target.checked;
+    updateMapVisibility();
+    showToast(mapVisible ? 'تم تفعيل الخريطة' : 'تم إخفاء الخريطة');
   });
 });
 
@@ -1418,8 +1547,14 @@ function init(){
   const savedTheme = localStorage.getItem('theme') || 'dark';
   document.body.setAttribute('data-theme', savedTheme);
   
+  // Load saved map visibility - default to false
+  mapVisible = localStorage.getItem('mapVisible') === 'true';
+  
   buildSelects();
-  initMap();
+  
+  // Update map visibility based on saved preference
+  updateMapVisibility();
+  
   const savedPhone = localStorage.getItem('ta_phone') || '';
   const savedEmail = localStorage.getItem('ta_email') || '';
   document.getElementById('waInput').value = savedPhone;
