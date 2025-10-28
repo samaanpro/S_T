@@ -7,6 +7,11 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23c9a84a'/%3E%3Cstop offset='100%25' style='stop-color:%23e0c77b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='6' fill='%230b0f12'/%3E%3Crect x='4' y='4' width='24' height='24' rx='4' fill='url(%23a)'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='14' font-weight='bold' text-anchor='middle' fill='%230b0f12'%3ESN%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23c9a84a'/%3E%3Cstop offset='100%25' style='stop-color:%23e0c77b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='36' fill='%230b0f12'/%3E%3Crect x='20' y='20' width='140' height='140' rx='28' fill='url(%23a)'/%3E%3Ctext x='90' y='115' font-family='Arial,sans-serif' font-size='72' font-weight='bold' text-anchor='middle' fill='%230b0f12'%3ESN%3C/text%3E%3C/svg%3E">
 <link rel="manifest" href="data:application/json,{%22name%22:%22Train%20Alert%20Pro%22,%22short_name%22:%22TrainAlert%22,%22icons%22:[{%22src%22:%22data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22}],%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230b0f12%22,%22theme_color%22:%22%23c9a84a%22}">
+
+<!-- إضافة مكتبة Leaflet للخرائط -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <style>
 :root{
   --bg-0:#0b0f12; --bg-1:#111417; --card:#121417;
@@ -741,6 +746,31 @@ input:checked + .toggle-slider:before {
   border-radius: 50%;
   background: currentColor;
 }
+
+/* Map error styling */
+.map-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 1000;
+  max-width: 80%;
+}
+
+.map-error button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  background: var(--gold);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -929,8 +959,6 @@ input:checked + .toggle-slider:before {
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <div class="status-indicator online" id="connectionStatus">متصل</div>
-          <div class="small" id="notifStatus">حالة الإشعارات: مفعلة</div>
-          <button id="mapToggleBtn" class="btn ghost" title="إظهار/إخفاء الخريطة">🗺️ خريطة</button>
           <button id="menuBtn" class="btn ghost" title="القائمة">☰</button>
         </div>
       </div>
@@ -940,24 +968,14 @@ input:checked + .toggle-slider:before {
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-weight:900">إعداد الرحلة</div>
-              <div class="route-info small">أدخل بياناتك ثم اختر نقطة القيام والوصول</div>
+              <div class="route-info small">اختر نقطة القيام والوصول</div>
             </div>
             <div style="text-align:center">
               <div style="font-weight:800;color:var(--gold)">🚆 SN</div>
-              <div class="small" style="color:var(--muted)">نسخة احترافية</div>
             </div>
           </div>
 
           <div class="controls-row" style="margin-top:12px">
-            <div class="input-group">
-              <input id="waInput" class="input-field" placeholder="رقم واتساب (اختياري)" aria-label="رقم واتساب"/>
-            </div>
-            <div class="input-group">
-              <input id="emailInput" class="input-field" placeholder="بريد إلكتروني (اختياري)" aria-label="بريد إلكتروني"/>
-            </div>
-          </div>
-
-          <div class="controls-row" style="margin-top:10px">
             <div class="input-group">
               <label>من (محطة القيام)</label>
               <div class="custom-select">
@@ -986,6 +1004,10 @@ input:checked + .toggle-slider:before {
         <div class="right-col" id="rightCol">
           <div class="map-container">
             <div id="map" class="map" role="region" aria-label="خريطة المسار"></div>
+            <div id="mapError" class="map-error hidden">
+              <p>حدث خطأ في تحميل الخريطة</p>
+              <button id="retryMapBtn">إعادة المحاولة</button>
+            </div>
             <button id="mapControlBtn" class="map-control">🗺️</button>
           </div>
         </div>
@@ -1344,11 +1366,18 @@ function initMap(){
   if (!mapVisible) return;
   
   const mapContainer = document.getElementById('map');
+  const mapError = document.getElementById('mapError');
+  
   if (!mapContainer || mapContainer.offsetParent === null) {
     return;
   }
   
   try {
+    // التحقق من وجود مكتبة Leaflet
+    if (typeof L === 'undefined') {
+      throw new Error('مكتبة Leaflet غير محملة');
+    }
+    
     // استخدام إعدادات محسنة للأداء
     map = L.map('map', { 
       preferCanvas: true,
@@ -1364,6 +1393,17 @@ function initMap(){
       updateWhenIdle: !PERFORMANCE_OPTIMIZATIONS.dataSaver,
       updateWhenZooming: !PERFORMANCE_OPTIMIZATIONS.dataSaver
     }).addTo(map);
+    
+    // معالجة أخطاء تحميل الخريطة
+    tileLayer.on('tileerror', function(error) {
+      console.error('Map tile error:', error);
+      if (!mapError.classList.contains('hidden')) return;
+      
+      mapError.classList.remove('hidden');
+      setTimeout(() => {
+        mapError.classList.add('hidden');
+      }, 5000);
+    });
     
     const latlngs = STATIONS.map(s=>[s.lat,s.lng]);
     routeLine = L.polyline(latlngs, { color: '#c9a84a', weight:4, opacity:0.95 }).addTo(map);
@@ -1398,7 +1438,10 @@ function initMap(){
     
   } catch (error) {
     console.error('Error initializing map:', error);
-    showToast('خطأ في تحميل الخريطة');
+    showToast('خطأ في تحميل الخريطة: ' + error.message);
+    
+    // عرض رسالة خطأ للمستخدم
+    mapError.classList.remove('hidden');
   }
 }
 
@@ -1406,13 +1449,11 @@ function initMap(){
 function updateMapVisibility() {
   const rightCol = document.getElementById('rightCol');
   const layout = document.getElementById('layout');
-  const mapToggleBtn = document.getElementById('mapToggleBtn');
   const mapToggleSetting = document.getElementById('mapToggleSetting');
   
   if (mapVisible) {
     rightCol.classList.add('active');
     layout.classList.remove('no-map');
-    mapToggleBtn.textContent = '🗺️ إخفاء الخريطة';
     if (mapToggleSetting) mapToggleSetting.checked = true;
     
     if (!map) {
@@ -1432,7 +1473,6 @@ function updateMapVisibility() {
   } else {
     rightCol.classList.remove('active');
     layout.classList.add('no-map');
-    mapToggleBtn.textContent = '🗺️ إظهار الخريطة';
     if (mapToggleSetting) mapToggleSetting.checked = false;
   }
   
@@ -1742,25 +1782,6 @@ function startTracking(){
     return; 
   }
   
-  const wa = document.getElementById('waInput').value.trim();
-  const em = document.getElementById('emailInput').value.trim();
-  
-  if (wa && !/^[\d\s\+\-\(\)]+$/.test(wa)) {
-    showToast('رقم الواتساب غير صحيح');
-    return;
-  }
-  
-  if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
-    showToast('البريد الإلكتروني غير صحيح');
-    return;
-  }
-  
-  trackingState.wa = wa;
-  trackingState.email = em;
-  
-  if (wa) localStorage.setItem('ta_phone', wa);
-  if (em) localStorage.setItem('ta_email', em);
-  
   buildRoute();
   
   isTracking = true;
@@ -1780,13 +1801,10 @@ function startTracking(){
   
   if('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied'){
     Notification.requestPermission().then(p => {
-      document.getElementById('notifStatus').textContent = 'حالة الإشعارات: ' + (p==='granted'?'مفعلة':'موقوفة');
       if (p === 'granted') {
         showToast('تم تفعيل الإشعارات بنجاح');
       }
     });
-  } else {
-    document.getElementById('notifStatus').textContent = 'حالة الإشعارات: ' + (Notification.permission==='granted'?'مفعلة':'موقوفة');
   }
 
   try{ 
@@ -1881,8 +1899,6 @@ async function releaseWakeLock(){
 function updateUIFromTrackingState() {
   document.getElementById('startSelect').value = trackingState.startIdx;
   document.getElementById('destSelect').value = trackingState.destIdx;
-  document.getElementById('waInput').value = trackingState.wa;
-  document.getElementById('emailInput').value = trackingState.email;
   buildRoute();
 }
 
@@ -1936,7 +1952,6 @@ function toggleTheme() {
 }
 
 /* UI wiring & persistence */
-document.getElementById('mapToggleBtn').addEventListener('click', toggleMapVisibility);
 document.getElementById('mapControlBtn').addEventListener('click', toggleMapVisibility);
 
 document.getElementById('menuBtn').addEventListener('click', openSidebar);
@@ -1959,26 +1974,6 @@ document.getElementById('trackingBtn').addEventListener('click', toggleTracking)
 document.getElementById('startSelect').addEventListener('change', buildRoute);
 document.getElementById('destSelect').addEventListener('change', buildRoute);
 
-document.getElementById('waInput').addEventListener('change', (e)=> {
-  const value = e.target.value.trim();
-  if (value && /^[\d\s\+\-\(\)]+$/.test(value)) {
-    localStorage.setItem('ta_phone', value);
-    trackingState.wa = value;
-  } else if (value) {
-    showToast('رقم الواتساب غير صحيح');
-  }
-});
-
-document.getElementById('emailInput').addEventListener('change', (e)=> {
-  const value = e.target.value.trim();
-  if (value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-    localStorage.setItem('ta_email', value);
-    trackingState.email = value;
-  } else if (value) {
-    showToast('البريد الإلكتروني غير صحيح');
-  }
-});
-
 // Sidebar settings
 document.getElementById('mapToggleSetting').addEventListener('change', (e) => {
   mapVisible = e.target.checked;
@@ -1987,7 +1982,6 @@ document.getElementById('mapToggleSetting').addEventListener('change', (e) => {
 
 document.getElementById('notificationsToggle').addEventListener('change', (e) => {
   localStorage.setItem('notificationsEnabled', e.target.checked);
-  document.getElementById('notifStatus').textContent = `حالة الإشعارات: ${e.target.checked ? 'مفعلة' : 'موقوفة'}`;
 });
 
 document.getElementById('soundToggle').addEventListener('change', (e) => {
@@ -2017,6 +2011,12 @@ document.getElementById('floatingBtn').addEventListener('click', () => {
   badge.classList.add('hidden');
   notificationCount = 0;
   openSidebar();
+});
+
+// Retry map button
+document.getElementById('retryMapBtn').addEventListener('click', () => {
+  document.getElementById('mapError').classList.add('hidden');
+  initMap();
 });
 
 /* Init app */
@@ -2054,19 +2054,9 @@ function init(){
   
   PERFORMANCE_OPTIMIZATIONS.dataSaver = dataSaverEnabled;
   
-  document.getElementById('notifStatus').textContent = `حالة الإشعارات: ${notificationsEnabled ? 'مفعلة' : 'موقوفة'}`;
-  
   buildSelects();
   updateMapVisibility();
   applyDataSaverSettings();
-  
-  const savedPhone = localStorage.getItem('ta_phone') || '';
-  const savedEmail = localStorage.getItem('ta_email') || '';
-  document.getElementById('waInput').value = savedPhone;
-  document.getElementById('emailInput').value = savedEmail;
-  
-  trackingState.wa = savedPhone;
-  trackingState.email = savedEmail;
   
   buildRoute();
   
