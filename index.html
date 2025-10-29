@@ -263,6 +263,8 @@ body{position:relative}
 .station.next .dot{background:var(--gold-2); animation:glow 2s infinite}
 .station.passed .dot{background:var(--success); box-shadow:0 6px 18px rgba(76,175,80,0.3)}
 .station.passed .dot::after{opacity:1; background:var(--bg-0)}
+.station.warning{border-style:dashed; border-color:var(--warning); background:rgba(255,152,0,0.1)}
+.station.warning .dot{background:var(--warning); animation:glow 2s infinite}
 .right-col{border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01)); box-shadow:var(--shadow-1); display:none}
 .right-col.active{display:block}
 .map{height:78vh; position:relative}
@@ -1159,6 +1161,333 @@ input:checked + .toggle-slider:before {
     flex-direction: column;
   }
 }
+
+/* Notification toast improvements */
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow-2);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 350px;
+  transform: translateX(400px);
+  transition: transform 0.3s ease-out;
+  border-left: 4px solid var(--gold);
+}
+
+.notification-toast.show {
+  transform: translateX(0);
+}
+
+.notification-toast-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.notification-toast-content {
+  flex: 1;
+}
+
+.notification-toast-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.notification-toast-body {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.notification-toast-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.notification-toast-close:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+}
+
+/* Notification permission banner */
+.notification-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--gradient-1);
+  color: #07120b;
+  padding: 12px;
+  text-align: center;
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: var(--shadow-1);
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-out;
+}
+
+.notification-banner.show {
+  transform: translateY(0);
+}
+
+.notification-banner-text {
+  font-weight: 600;
+}
+
+.notification-banner-button {
+  background: rgba(7,18,11,0.2);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.notification-banner-button:hover {
+  background: rgba(7,18,11,0.3);
+}
+
+/* Notification settings panel */
+.notification-settings-panel {
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.notification-settings-title {
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notification-setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.notification-setting:last-child {
+  border-bottom: none;
+}
+
+.notification-setting-label {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.notification-setting-description {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Notification history */
+.notification-history {
+  margin-top: 15px;
+}
+
+.notification-history-title {
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clear-notifications-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.clear-notifications-btn:hover {
+  color: var(--danger);
+}
+
+.notification-history-item {
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  border-left: 3px solid var(--gold);
+}
+
+.notification-history-time {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.notification-history-empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 15px;
+}
+
+/* GPS Status Indicator */
+.gps-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(76,175,80,0.1);
+  color: var(--success);
+}
+
+.gps-status.weak {
+  background: rgba(255,152,0,0.1);
+  color: var(--warning);
+}
+
+.gps-status.offline {
+  background: rgba(244,67,54,0.1);
+  color: var(--danger);
+}
+
+.gps-status::before {
+  content: "📍";
+}
+
+/* Station proximity indicator */
+.proximity-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(201,168,74,0.1);
+  color: var(--gold);
+}
+
+.proximity-indicator.warning {
+  background: rgba(255,152,0,0.1);
+  color: var(--warning);
+}
+
+.proximity-indicator.arrival {
+  background: rgba(244,67,54,0.1);
+  color: var(--danger);
+  animation: urgentPulse 1s infinite;
+}
+
+.proximity-indicator::before {
+  content: "🚉";
+}
+
+/* Debug panel */
+.debug-panel {
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.debug-info {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.debug-label {
+  color: var(--muted);
+}
+
+.debug-value {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Notification test panel */
+.test-notification-panel {
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.test-notification-title {
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.test-notification-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.test-notification-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--gradient-1);
+  color: #07120b;
+}
+
+.test-notification-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201,168,74,0.15);
+}
+
+.test-notification-btn.warning {
+  background: var(--warning);
+  color: #fff;
+}
+
+.test-notification-btn.arrival {
+  background: var(--danger);
+  color: #fff;
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -1173,6 +1502,22 @@ input:checked + .toggle-slider:before {
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Notification Permission Banner -->
+  <div class="notification-banner" id="notificationBanner">
+    <div class="notification-banner-text">🔔 للاستفادة الكاملة من التطبيق، يرجى السماح بالإشعارات</div>
+    <button class="notification-banner-button" id="notificationBannerButton">تفعيل الآن</button>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="notification-toast" id="notificationToast">
+    <div class="notification-toast-icon" id="notificationToastIcon">🔔</div>
+    <div class="notification-toast-content">
+      <div class="notification-toast-title" id="notificationToastTitle">عنوان الإشعار</div>
+      <div class="notification-toast-body" id="notificationToastBody">نص الإشعار</div>
+    </div>
+    <button class="notification-toast-close" id="notificationToastClose">✕</button>
   </div>
 
   <!-- نافذة طلب إذن الإشعارات المحلية -->
@@ -1243,6 +1588,7 @@ input:checked + .toggle-slider:before {
       <nav class="header-nav">
         <a href="#" class="nav-link about" id="aboutLink">حول التطبيق</a>
         <div class="network-status" id="networkStatus">اتصال ممتاز</div>
+        <div class="gps-status" id="gpsStatus">GPS جيد</div>
         <div class="local-notification-status" id="localNotificationStatus">الإشعارات</div>
       </nav>
     </div>
@@ -1380,12 +1726,54 @@ input:checked + .toggle-slider:before {
     <div class="sidebar-section">
       <h3>إعدادات الإشعارات المحلية</h3>
       
-      <div class="sidebar-option">
-        <span>تفعيل الإشعارات المحلية</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="localNotificationsToggle" checked>
-          <span class="toggle-slider"></span>
-        </label>
+      <div class="notification-settings-panel">
+        <div class="notification-settings-title">
+          <span>⚙️ إعدادات الإشعارات</span>
+        </div>
+        
+        <div class="notification-setting">
+          <div>
+            <div class="notification-setting-label">تفعيل الإشعارات المحلية</div>
+            <div class="notification-setting-description">استلام إشعارات عند الاقتراب من المحطات</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="localNotificationsToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        
+        <div class="notification-setting">
+          <div>
+            <div class="notification-setting-label">إشعارات الوصول</div>
+            <div class="notification-setting-description">إشعارات عند الوصول للمحطة</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="arrivalNotificationsToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        
+        <div class="notification-setting">
+          <div>
+            <div class="notification-setting-label">إشعارات التحذير</div>
+            <div class="notification-setting-description">إشعارات قبل محطتين من الوصول</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="warningNotificationsToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        
+        <div class="notification-setting">
+          <div>
+            <div class="notification-setting-label">إشعارات مستمرة</div>
+            <div class="notification-setting-description">إشعارات متكررة عند الوصول</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="continuousNotificationsToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
       </div>
       
       <div style="margin-top: 10px; display: flex; gap: 8px">
@@ -1418,9 +1806,29 @@ input:checked + .toggle-slider:before {
     </div>
     
     <div class="sidebar-section">
-      <h3>الإشعارات</h3>
-      <div class="notifications-list" id="notificationsList">
-        <!-- Notifications will be added here dynamically -->
+      <h3>اختبار الإشعارات</h3>
+      <div class="test-notification-panel">
+        <div class="test-notification-title">
+          <span>🧪 اختبار أنواع الإشعارات</span>
+        </div>
+        <div class="test-notification-buttons">
+          <button id="testNormalNotificationBtn" class="test-notification-btn">عادي</button>
+          <button id="testWarningNotificationBtn" class="test-notification-btn warning">تحذير</button>
+          <button id="testArrivalNotificationBtn" class="test-notification-btn arrival">وصول</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar-section">
+      <h3>سجل الإشعارات</h3>
+      <div class="notification-history">
+        <div class="notification-history-title">
+          <span>آخر الإشعارات</span>
+          <button class="clear-notifications-btn" id="clearNotificationsBtn">مسح الكل</button>
+        </div>
+        <div id="notificationHistoryList">
+          <div class="notification-history-empty">لا توجد إشعارات بعد</div>
+        </div>
       </div>
     </div>
     
@@ -1428,6 +1836,36 @@ input:checked + .toggle-slider:before {
       <h3>حالة التتبع</h3>
       <div id="trackingStatusInfo">
         <p>التتبع غير نشط</p>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>معلومات النظام</h3>
+      <div class="debug-panel">
+        <div class="debug-info">
+          <span class="debug-label">الموقع الحالي:</span>
+          <span class="debug-value" id="debugCurrentLocation">غير متوفر</span>
+        </div>
+        <div class="debug-info">
+          <span class="debug-label">أقرب محطة:</span>
+          <span class="debug-value" id="debugNearestStation">غير محدد</span>
+        </div>
+        <div class="debug-info">
+          <span class="debug-label">المسافة للمحطة:</span>
+          <span class="debug-value" id="debugDistanceToStation">غير محدد</span>
+        </div>
+        <div class="debug-info">
+          <span class="debug-label">المحطات المتبقية:</span>
+          <span class="debug-value" id="debugRemainingStations">غير محدد</span>
+        </div>
+        <div class="debug-info">
+          <span class="debug-label">دقة GPS:</span>
+          <span class="debug-value" id="debugGpsAccuracy">غير محدد</span>
+        </div>
+        <div class="debug-info">
+          <span class="debug-label">آخر تحديث:</span>
+          <span class="debug-value" id="debugLastUpdate">غير محدد</span>
+        </div>
       </div>
     </div>
 
@@ -1454,6 +1892,7 @@ input:checked + .toggle-slider:before {
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <div class="status-indicator online" id="connectionStatus">متصل</div>
+          <div class="proximity-indicator" id="proximityIndicator" style="display:none">بعيد عن المحطة</div>
           <button id="menuBtn" class="btn ghost" title="القائمة">☰</button>
         </div>
       </div>
@@ -1543,8 +1982,14 @@ const PERFORMANCE_OPTIMIZATIONS = {
 // إعدادات الإشعارات المحلية
 let localNotificationSettings = {
   enabled: false,
-  permission: 'default' // 'granted', 'denied', 'default'
+  permission: 'default', // 'granted', 'denied', 'default'
+  arrivalNotifications: true,
+  warningNotifications: true,
+  continuousNotifications: true
 };
+
+// سجل الإشعارات
+let notificationHistory = [];
 
 /* Stations EXACT ORDER provided by you */
 const STATIONS = [
@@ -1615,6 +2060,15 @@ let lastPositionUpdate = 0;
 let continuousNotificationInterval = null;
 let arrivalNotificationShown = false;
 let userConfirmedArrival = false; // متغير جديد لتتبع تأكيد المستخدم
+
+// متغيرات لتتبع حالة الإشعارات
+let lastWarningNotificationTime = 0;
+let lastArrivalNotificationTime = 0;
+let lastContinuousNotificationTime = 0;
+
+// متغيرات لتتبع دقة GPS
+let gpsAccuracy = null;
+let lastGpsUpdateTime = null;
 
 /* مراقبة جودة الشبكة */
 function monitorNetworkQuality() {
@@ -1717,6 +2171,61 @@ function updateConnectionStatus() {
   }
 }
 
+// دالة لتحديث حالة GPS
+function updateGpsStatus(accuracy) {
+  const gpsStatus = document.getElementById('gpsStatus');
+  if (!gpsStatus) return;
+  
+  gpsAccuracy = accuracy;
+  lastGpsUpdateTime = new Date().toLocaleTimeString('ar-EG');
+  
+  // تحديث معلومات التصحيح
+  document.getElementById('debugGpsAccuracy').textContent = accuracy ? `${accuracy.toFixed(0)}م` : 'غير محدد';
+  document.getElementById('debugLastUpdate').textContent = lastGpsUpdateTime;
+  
+  if (!accuracy) {
+    gpsStatus.textContent = 'GPS غير متوفر';
+    gpsStatus.className = 'gps-status offline';
+    return;
+  }
+  
+  if (accuracy < 10) {
+    gpsStatus.textContent = 'GPS ممتاز';
+    gpsStatus.className = 'gps-status';
+  } else if (accuracy < 50) {
+    gpsStatus.textContent = 'GPS جيد';
+    gpsStatus.className = 'gps-status';
+  } else if (accuracy < 100) {
+    gpsStatus.textContent = 'GPS ضعيف';
+    gpsStatus.className = 'gps-status weak';
+  } else {
+    gpsStatus.textContent = 'GPS سيء';
+    gpsStatus.className = 'gps-status offline';
+  }
+}
+
+// دالة لتحديث مؤشر القرب من المحطة
+function updateProximityIndicator(distance, remaining) {
+  const proximityIndicator = document.getElementById('proximityIndicator');
+  if (!proximityIndicator) return;
+  
+  if (remaining === 0 || distance <= 0.6) {
+    proximityIndicator.textContent = 'لقد وصلت!';
+    proximityIndicator.className = 'proximity-indicator arrival';
+    proximityIndicator.style.display = 'flex';
+  } else if (remaining <= 2) {
+    proximityIndicator.textContent = 'قريب جداً';
+    proximityIndicator.className = 'proximity-indicator warning';
+    proximityIndicator.style.display = 'flex';
+  } else if (remaining <= 5) {
+    proximityIndicator.textContent = 'قريب';
+    proximityIndicator.className = 'proximity-indicator';
+    proximityIndicator.style.display = 'flex';
+  } else {
+    proximityIndicator.style.display = 'none';
+  }
+}
+
 // دالة لطلب إذن الإشعارات
 function requestNotificationPermission() {
   if (!('Notification' in window)) {
@@ -1757,6 +2266,7 @@ function requestNotificationPermission() {
 // دالة لإرسال إشعارات محلية
 function sendLocalNotification(title, body, options = {}) {
   if (!localNotificationSettings.enabled) {
+    console.log('الإشعارات غير مفعلة');
     return false;
   }
   
@@ -1782,11 +2292,65 @@ function sendLocalNotification(title, body, options = {}) {
       notification.close();
     };
     
+    // إضافة إلى سجل الإشعارات
+    addToNotificationHistory(title, body);
+    
+    console.log('تم إرسال الإشعار بنجاح:', title);
     return true;
   } catch (error) {
     console.error('Error sending local notification:', error);
     return false;
   }
+}
+
+// دالة لإضافة إشعار إلى السجل
+function addToNotificationHistory(title, body) {
+  const notification = {
+    id: Date.now(),
+    title,
+    body,
+    time: new Date().toLocaleTimeString('ar-EG'),
+    read: false
+  };
+  
+  notificationHistory.unshift(notification);
+  
+  // الاحتفاظ بـ 20 إشعار فقط في السجل
+  if (notificationHistory.length > 20) {
+    notificationHistory = notificationHistory.slice(0, 20);
+  }
+  
+  updateNotificationHistoryUI();
+}
+
+// دالة لتحديث واجهة سجل الإشعارات
+function updateNotificationHistoryUI() {
+  const historyList = document.getElementById('notificationHistoryList');
+  
+  if (notificationHistory.length === 0) {
+    historyList.innerHTML = '<div class="notification-history-empty">لا توجد إشعارات بعد</div>';
+    return;
+  }
+  
+  historyList.innerHTML = '';
+  
+  notificationHistory.forEach(notification => {
+    const item = document.createElement('div');
+    item.className = 'notification-history-item';
+    item.innerHTML = `
+      <div>${notification.title}</div>
+      <div class="small">${notification.body}</div>
+      <div class="notification-history-time">${notification.time}</div>
+    `;
+    historyList.appendChild(item);
+  });
+}
+
+// دالة لمسح سجل الإشعارات
+function clearNotificationHistory() {
+  notificationHistory = [];
+  updateNotificationHistoryUI();
+  showToast('تم مسح سجل الإشعارات');
 }
 
 // دالة لتحديث حالة الإشعارات المحلية في الواجهة
@@ -1813,6 +2377,46 @@ function showNotificationPermissionModal() {
 function hideNotificationPermissionModal() {
   const modal = document.getElementById('notificationPermissionModal');
   modal.style.display = 'none';
+}
+
+// دالة لإظهار بانر الإشعارات
+function showNotificationBanner() {
+  const banner = document.getElementById('notificationBanner');
+  banner.classList.add('show');
+}
+
+// دالة لإخفاء بانر الإشعارات
+function hideNotificationBanner() {
+  const banner = document.getElementById('notificationBanner');
+  banner.classList.remove('show');
+}
+
+// دالة لإظهار إشعار Toast
+function showNotificationToast(title, body, icon = '🔔') {
+  const toast = document.getElementById('notificationToast');
+  const toastIcon = document.getElementById('notificationToastIcon');
+  const toastTitle = document.getElementById('notificationToastTitle');
+  const toastBody = document.getElementById('notificationToastBody');
+  
+  toastIcon.textContent = icon;
+  toastTitle.textContent = title;
+  toastBody.textContent = body;
+  
+  toast.classList.add('show');
+  
+  // إضافة إلى سجل الإشعارات
+  addToNotificationHistory(title, body);
+  
+  // إغلاق تلقائي بعد 5 ثوانٍ
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 5000);
+}
+
+// دالة لإغلاق إشعار Toast
+function closeNotificationToast() {
+  const toast = document.getElementById('notificationToast');
+  toast.classList.remove('show');
 }
 
 /* Helpers محسنة */
@@ -1900,6 +2504,8 @@ function stopRing(){
 
 // تعديل دالة الوصول للمحطة لإرسال إشعارات محلية عاجلة ومستمرة
 function arrivalAction(station){
+  console.log('وصول إلى المحطة:', station.name);
+  
   startRing();
   addNotification(`وصلت تقريباً - ${station.name}`, 'تأكد من متعلقاتك وانزل بأمان', true);
   
@@ -1916,7 +2522,7 @@ function arrivalAction(station){
   }
   
   // بدء إرسال إشعارات محلية مستمرة
-  if (localNotificationSettings.enabled && !continuousNotificationInterval) {
+  if (localNotificationSettings.enabled && localNotificationSettings.arrivalNotifications && !continuousNotificationInterval) {
     // إرسال إشعار عاجل أول
     sendLocalNotification(
       `🚉 وصول إلى المحطة!`, 
@@ -1926,14 +2532,14 @@ function arrivalAction(station){
     
     // إرسال إشعارات مستمرة كل 30 ثانية
     continuousNotificationInterval = setInterval(() => {
-      if (isTracking && localNotificationSettings.enabled && !userConfirmedArrival) {
+      if (isTracking && localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !userConfirmedArrival) {
         sendLocalNotification(
           `🚉 تذكير بالوصول`, 
           `أنت الآن في محطة ${station.name}\n\n⚠️ يرجى الانتباه ⚠️\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
           { urgent: true }
         );
       }
-    }, 2000); // كل 2 ثانية
+    }, 10000); // كل 10 ثوانٍ
   }
 }
 
@@ -2199,6 +2805,12 @@ function updatePosition(lat,lng,accuracy,ts = Date.now()){
   }
   lastPositionUpdate = now;
   
+  // تحديث حالة GPS
+  updateGpsStatus(accuracy);
+  
+  // تحديث معلومات التصحيح
+  document.getElementById('debugCurrentLocation').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  
   setUserMarker(lat,lng);
   setTrainMarker(lat,lng);
   panTo(lat,lng);
@@ -2206,11 +2818,15 @@ function updatePosition(lat,lng,accuracy,ts = Date.now()){
   const nearest = findNearestStation(lat,lng);
   const nearestGlobal = nearest.idx;
   const inRoutePos = routeIndices.indexOf(nearestGlobal);
+  
+  // تحديث معلومات التصحيح
+  document.getElementById('debugNearestStation').textContent = STATIONS[nearestGlobal].name;
+  document.getElementById('debugDistanceToStation').textContent = `${nearest.distKm.toFixed(2)} كم`;
 
   // تحديث حالة المحطات
   document.querySelectorAll('.station').forEach(el => { 
     const idx = parseInt(el.dataset.idx);
-    el.classList.remove('active','next','passed'); 
+    el.classList.remove('active','next','passed','warning'); 
     el.querySelector('.dot').style.background = 'rgba(255,255,255,0.05)';
   });
 
@@ -2242,6 +2858,17 @@ function updatePosition(lat,lng,accuracy,ts = Date.now()){
       }
     }
     
+    // إضافة تحذير للمحطة التالية بعد المحطة الحالية
+    const warningPos = inRoutePos + 2;
+    if(warningPos < routeIndices.length){
+      const warningIdx = routeIndices[warningPos];
+      const warningEl = document.querySelector(`.station[data-idx="${warningIdx}"]`);
+      if(warningEl){ 
+        warningEl.classList.add('warning'); 
+        warningEl.querySelector('.dot').style.background = 'var(--warning)'; 
+      }
+    }
+    
     const progress = ((inRoutePos + 1) / routeIndices.length) * 100;
     document.getElementById('routeProgress').style.width = `${progress}%`;
   } else {
@@ -2255,6 +2882,9 @@ function updatePosition(lat,lng,accuracy,ts = Date.now()){
   let remaining = 0;
   if(inRoutePos !== -1) remaining = routeIndices.length - 1 - inRoutePos;
   else { const dest = +document.getElementById('destSelect').value; remaining = Math.abs(dest - nearestGlobal); }
+  
+  // تحديث معلومات التصحيح
+  document.getElementById('debugRemainingStations').textContent = remaining;
 
   const destIndex = +document.getElementById('destSelect').value;
   const remainingKm = haversineKm(lat,lng, STATIONS[destIndex].lat, STATIONS[destIndex].lng);
@@ -2270,17 +2900,29 @@ function updatePosition(lat,lng,accuracy,ts = Date.now()){
   
   document.getElementById('routeInfo').textContent = 
     `أقرب: ${STATIONS[nearestGlobal].name} · متبقي: ${remaining} محطة · ${remainingKm.toFixed(2)} كم · سرعة: ${speedKmh>0.2?speedKmh.toFixed(1)+' كم/س':'—'} · ETA: ${formatETA(etaSec)}`;
+  
+  // تحديث مؤشر القرب من المحطة
+  updateProximityIndicator(remainingKm, remaining);
 
-  // pre-warn: remaining == 2
-  if(remaining === 2 && preWarnedAt !== nearestGlobal){
-    preWarnedAt = nearestGlobal;
-    preWarnAction(STATIONS[nearestGlobal], remainingKm);
+  // pre-warn: remaining == 2 - تحسينات لضمان عمل الإشعارات
+  const currentTime = Date.now();
+  if(remaining === 2 && preWarnedAt !== nearestGlobal && localNotificationSettings.warningNotifications){
+    // التحقق من مرور 30 ثانية على الأقل منذ آخر إشعار تحذير
+    if (currentTime - lastWarningNotificationTime > 30000) {
+      preWarnedAt = nearestGlobal;
+      lastWarningNotificationTime = currentTime;
+      preWarnAction(STATIONS[nearestGlobal], remainingKm);
+    }
   }
 
-  // arrival - تعديل لعدم إيقاف الإشعارات تلقائياً
+  // arrival - تعديل لضمان عمل الإشعارات عند الوصول
   if((remaining === 0 || remainingKm <= 0.6) && !arrivedFlag){
-    arrivedFlag = true;
-    arrivalAction(STATIONS[destIndex]);
+    // التحقق من مرور 30 ثانية على الأقل منذ آخر إشعار وصول
+    if (currentTime - lastArrivalNotificationTime > 30000) {
+      arrivedFlag = true;
+      lastArrivalNotificationTime = currentTime;
+      arrivalAction(STATIONS[destIndex]);
+    }
   }
   // لا يتم إعادة تعيين arrivedFlag تلقائياً
 
@@ -2289,11 +2931,13 @@ function updatePosition(lat,lng,accuracy,ts = Date.now()){
 
 /* Actions */
 function preWarnAction(station, km){
+  console.log('إرسال إشعار تحذير قبل محطتين:', station.name, km);
+  
   playBeep(1200,160);
   addNotification(`قبل محطتين - ${station.name}`, `تبقى حوالي ${km.toFixed(2)} كم`);
   
   // إرسال إشعار محلي
-  if (localNotificationSettings.enabled) {
+  if (localNotificationSettings.enabled && localNotificationSettings.warningNotifications) {
     sendLocalNotification(
       `⚠️ تحذير قبل محطتين`, 
       `القطار يقترب من محطة ${station.name}\nالمسافة المتبقية: ${km.toFixed(2)} كم\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`
@@ -2389,6 +3033,11 @@ function startTracking(){
   arrivedFlag = false;
   arrivalNotificationShown = false;
   userConfirmedArrival = false;
+  
+  // إعادة تعيين مؤقتات الإشعارات
+  lastWarningNotificationTime = 0;
+  lastArrivalNotificationTime = 0;
+  lastContinuousNotificationTime = 0;
   
   // تحديث واجهة المستخدم
   const trackingBtn = document.getElementById('trackingBtn');
@@ -2633,6 +3282,52 @@ function testLocalNotifications() {
   }, 1000);
 }
 
+// دوال اختبار أنواع مختلفة من الإشعارات
+function testNormalNotification() {
+  if (!localNotificationSettings.enabled) {
+    showToast('يرجى تفعيل الإشعارات المحلية أولاً');
+    return;
+  }
+  
+  sendLocalNotification(
+    '📱 إشعار عادي', 
+    `هذا إشعار عادي للاختبار\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    { urgent: false }
+  );
+  
+  showToast('تم إرسال إشعار عادي');
+}
+
+function testWarningNotification() {
+  if (!localNotificationSettings.enabled) {
+    showToast('يرجى تفعيل الإشعارات المحلية أولاً');
+    return;
+  }
+  
+  sendLocalNotification(
+    '⚠️ إشعار تحذير', 
+    `هذا إشعار تحذير للاختبار\n\nسيتم إرسال هذا النوع من الإشعارات قبل محطتين من الوصول\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    { urgent: false }
+  );
+  
+  showToast('تم إرسال إشعار تحذير');
+}
+
+function testArrivalNotification() {
+  if (!localNotificationSettings.enabled) {
+    showToast('يرجى تفعيل الإشعارات المحلية أولاً');
+    return;
+  }
+  
+  sendLocalNotification(
+    '🚉 إشعار وصول', 
+    `هذا إشعار وصول للاختبار\n\nسيتم إرسال هذا النوع من الإشعارات عند الوصول للمحطة\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    { urgent: true }
+  );
+  
+  showToast('تم إرسال إشعار وصول');
+}
+
 /* UI wiring & persistence */
 document.getElementById('mapControlBtn').addEventListener('click', toggleMapVisibility);
 
@@ -2704,7 +3399,34 @@ document.getElementById('localNotificationsToggle').addEventListener('change', (
   showToast(e.target.checked ? 'تم تفعيل الإشعارات المحلية' : 'تم إيقاف الإشعارات المحلية');
 });
 
+// Notification type toggles
+document.getElementById('arrivalNotificationsToggle').addEventListener('change', (e) => {
+  localNotificationSettings.arrivalNotifications = e.target.checked;
+  localStorage.setItem('arrivalNotificationsEnabled', e.target.checked);
+  showToast(e.target.checked ? 'تم تفعيل إشعارات الوصول' : 'تم إيقاف إشعارات الوصول');
+});
+
+document.getElementById('warningNotificationsToggle').addEventListener('change', (e) => {
+  localNotificationSettings.warningNotifications = e.target.checked;
+  localStorage.setItem('warningNotificationsEnabled', e.target.checked);
+  showToast(e.target.checked ? 'تم تفعيل إشعارات التحذير' : 'تم إيقاف إشعارات التحذير');
+});
+
+document.getElementById('continuousNotificationsToggle').addEventListener('change', (e) => {
+  localNotificationSettings.continuousNotifications = e.target.checked;
+  localStorage.setItem('continuousNotificationsEnabled', e.target.checked);
+  showToast(e.target.checked ? 'تم تفعيل الإشعارات المستمرة' : 'تم إيقاف الإشعارات المستمرة');
+});
+
 document.getElementById('testLocalNotificationsBtn').addEventListener('click', testLocalNotifications);
+
+// Test notification buttons
+document.getElementById('testNormalNotificationBtn').addEventListener('click', testNormalNotification);
+document.getElementById('testWarningNotificationBtn').addEventListener('click', testWarningNotification);
+document.getElementById('testArrivalNotificationBtn').addEventListener('click', testArrivalNotification);
+
+// Clear notifications history
+document.getElementById('clearNotificationsBtn').addEventListener('click', clearNotificationHistory);
 
 // Floating button for quick settings
 document.getElementById('floatingBtn').addEventListener('click', () => {
@@ -2729,6 +3451,15 @@ document.getElementById('closeArrivalNotification').addEventListener('click', ()
   stopContinuousNotifications();
   stopTracking();
 });
+
+// Notification banner button
+document.getElementById('notificationBannerButton').addEventListener('click', () => {
+  hideNotificationBanner();
+  showNotificationPermissionModal();
+});
+
+// Notification toast close button
+document.getElementById('notificationToastClose').addEventListener('click', closeNotificationToast);
 
 // إضافة event listeners للنافذة الجديدة
 document.getElementById('allowNotificationsBtn').addEventListener('click', () => {
@@ -2766,6 +3497,29 @@ document.getElementById('laterNotificationsBtn').addEventListener('click', () =>
 
 /* Init app */
 function init(){
+  // طلب إذن الإشعارات فوراً عند تحميل الصفحة
+  if ('Notification' in window && Notification.permission === 'default') {
+    // إظهار بانر الإشعارات أولاً
+    setTimeout(() => {
+      showNotificationBanner();
+    }, 1000);
+    
+    // ثم إظهار نافذة طلب الإذن بعد 3 ثوانٍ
+    setTimeout(() => {
+      hideNotificationBanner();
+      showNotificationPermissionModal();
+    }, 4000);
+  } else if ('Notification' in window && Notification.permission === 'granted') {
+    localNotificationSettings.enabled = true;
+    localNotificationSettings.permission = 'granted';
+    updateLocalNotificationStatus();
+    
+    // إرسال إشعار ترحيبي
+    setTimeout(() => {
+      sendLocalNotification('مرحباً بك في Train Alert Pro', 'تم تحميل التطبيق بنجاح وجاهز للاستخدام');
+    }, 2000);
+  }
+  
   // محاكاة شريط التقدم
   let progress = 0;
   const loadingInterval = setInterval(() => {
@@ -2775,24 +3529,6 @@ function init(){
       clearInterval(loadingInterval);
       setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
-        
-        // التحقق من حالة الإشعارات المحلية
-        if (Notification.permission === 'default') {
-          // إذا لم يتم طلب الإذن بعد، عرض نافذة الطلب
-          setTimeout(() => {
-            showNotificationPermissionModal();
-          }, 500);
-        } else {
-          // إذا كان الإذن ممنوحاً أو مرفوضاً، تحديث الحالة
-          localNotificationSettings.permission = Notification.permission;
-          localNotificationSettings.enabled = Notification.permission === 'granted';
-          updateLocalNotificationStatus();
-          
-          if (localNotificationSettings.enabled) {
-            // إرسال رسالة ترحيب إذا كانت الإشعارات مفعلة
-            sendLocalNotification('مرحباً بك في Train Alert Pro', 'تم تحميل التطبيق بنجاح وجاهز للاستخدام');
-          }
-        }
       }, 500);
     }
   }, 100);
@@ -2808,6 +3544,9 @@ function init(){
   const notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
   const dataSaverEnabled = localStorage.getItem('dataSaverEnabled') !== 'false';
   const localNotificationsEnabled = localStorage.getItem('localNotificationsEnabled') !== 'false';
+  const arrivalNotificationsEnabled = localStorage.getItem('arrivalNotificationsEnabled') !== 'false';
+  const warningNotificationsEnabled = localStorage.getItem('warningNotificationsEnabled') !== 'false';
+  const continuousNotificationsEnabled = localStorage.getItem('continuousNotificationsEnabled') !== 'false';
   
   document.getElementById('soundToggle').checked = soundEnabled;
   document.getElementById('vibrationToggle').checked = vibrationEnabled;
@@ -2816,9 +3555,15 @@ function init(){
   document.getElementById('mapToggleSetting').checked = mapVisible;
   document.getElementById('dataSaverToggle').checked = dataSaverEnabled;
   document.getElementById('localNotificationsToggle').checked = localNotificationsEnabled;
+  document.getElementById('arrivalNotificationsToggle').checked = arrivalNotificationsEnabled;
+  document.getElementById('warningNotificationsToggle').checked = warningNotificationsEnabled;
+  document.getElementById('continuousNotificationsToggle').checked = continuousNotificationsEnabled;
   
   // تحديث إعدادات الإشعارات المحلية
   localNotificationSettings.enabled = localNotificationsEnabled && Notification.permission === 'granted';
+  localNotificationSettings.arrivalNotifications = arrivalNotificationsEnabled;
+  localNotificationSettings.warningNotifications = warningNotificationsEnabled;
+  localNotificationSettings.continuousNotifications = continuousNotificationsEnabled;
   
   PERFORMANCE_OPTIMIZATIONS.dataSaver = dataSaverEnabled;
   
