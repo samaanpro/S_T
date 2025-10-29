@@ -815,6 +815,18 @@ input:checked + .toggle-slider:before {
   background: rgba(0,136,204,0.3);
 }
 
+.telegram-test-btn.testing {
+  background: rgba(255,152,0,0.2);
+  color: var(--warning);
+  animation: testingPulse 1s infinite;
+}
+
+@keyframes testingPulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
 /* Arrival notification animation */
 .arrival-notification {
   position: fixed;
@@ -1090,6 +1102,67 @@ input:checked + .toggle-slider:before {
   border: 1px solid rgba(255,255,255,0.1);
 }
 
+/* Test notification animation */
+.test-notification-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card);
+  border-radius: 16px;
+  padding: 25px;
+  max-width: 350px;
+  width: 90%;
+  z-index: 1003;
+  box-shadow: var(--shadow-2);
+  display: none;
+  text-align: center;
+  animation: slideDown 0.5s ease-out;
+}
+
+.test-notification-modal.active {
+  display: block;
+}
+
+.test-notification-modal h3 {
+  color: var(--gold);
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.test-notification-modal .test-icon {
+  font-size: 50px;
+  margin-bottom: 15px;
+  animation: bounce 1s infinite;
+}
+
+.test-notification-modal p {
+  margin-bottom: 20px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.test-progress {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  height: 6px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+.test-progress-bar {
+  height: 100%;
+  background: var(--gradient-1);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.test-status {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
 /* Responsive improvements */
 @media (max-width: 768px) {
   .telegram-guide-modal {
@@ -1103,6 +1176,11 @@ input:checked + .toggle-slider:before {
   
   .guide-section p {
     font-size: 13px;
+  }
+  
+  .test-notification-modal {
+    padding: 20px;
+    width: 95%;
   }
 }
 </style>
@@ -1140,6 +1218,18 @@ input:checked + .toggle-slider:before {
       </nav>
     </div>
   </header>
+
+  <!-- Test Notification Modal -->
+  <div class="test-notification-modal" id="testNotificationModal">
+    <div class="test-icon">📱</div>
+    <h3>جاري إرسال رسالة الاختبار</h3>
+    <p>سيتم إرسال رسالة عاجلة إلى تيليجرام لتجربة نظام التنبيه</p>
+    <div class="test-progress">
+      <div class="test-progress-bar" id="testProgressBar"></div>
+    </div>
+    <div class="test-status" id="testStatus">جاري الإرسال...</div>
+    <button id="closeTestModal" class="btn" style="margin-top: 15px">إغلاق</button>
+  </div>
 
   <!-- Telegram Guide Modal -->
   <div class="telegram-guide-modal" id="telegramGuideModal">
@@ -1869,6 +1959,7 @@ function sendTelegramNotification(title, message, urgent = false) {
   return sendWithRetry(0);
 }
 
+// تعديل دالة اختبار تيليجرام لإرسال رسالة عاجلة
 function testTelegramNotification() {
   if (!telegramSettings.chatId) {
     showToast('يرجى إدخال معرف الشات أولاً');
@@ -1881,15 +1972,76 @@ function testTelegramNotification() {
     return;
   }
   
-  showToast('جاري إرسال رسالة اختبار...');
-  sendTelegramNotification('رسالة اختبار', 'هذه رسالة اختبار من تطبيق Train Alert Pro')
-    .then(success => {
-      if (success) {
-        showToast('تم إرسال رسالة الاختبار بنجاح');
-      } else {
-        showToast('فشل إرسال رسالة الاختبار - تحقق من معرف الشات');
-      }
-    });
+  // عرض نافذة الاختبار
+  const testModal = document.getElementById('testNotificationModal');
+  const testBtn = document.getElementById('testTelegramBtn');
+  const progressBar = document.getElementById('testProgressBar');
+  const testStatus = document.getElementById('testStatus');
+  
+  testModal.classList.add('active');
+  testBtn.classList.add('testing');
+  testBtn.disabled = true;
+  
+  // إعادة تعيين شريط التقدم والحالة
+  progressBar.style.width = '0%';
+  testStatus.textContent = 'جاري الإرسال...';
+  
+  // محاكاة التقدم
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 20;
+    progressBar.style.width = `${progress}%`;
+    
+    if (progress >= 100) {
+      clearInterval(progressInterval);
+    }
+  }, 200);
+  
+  // إرسال إشعار اختبار عاجل
+  sendTelegramNotification(
+    '📱 رسالة اختبار عاجلة', 
+    `هذه رسالة اختبار من تطبيق Train Alert Pro\n\n🚨 *تنبيه اختبار* 🚨\n\nإذا وصلتك هذه الرسالة، فهذا يعني أن نظام التنبيه يعمل بشكل مثالي!\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}\n\n📍 الحالة: يعمل بنجاح`,
+    true // عاجل جداً
+  )
+  .then(success => {
+    clearInterval(progressInterval);
+    progressBar.style.width = '100%';
+    
+    if (success) {
+      testStatus.textContent = '✅ تم الإرسال بنجاح! تحقق من تيليجرام';
+      testStatus.style.color = 'var(--success)';
+      
+      // إرسال إشعار تأكيد بعد ثانية
+      setTimeout(() => {
+        sendTelegramNotification(
+          '✅ تأكيد الاختبار', 
+          `تم تأكيد استلام رسالة الاختبار\n\nالنظام جاهز للاستخدام\n\n🚆 Train Alert Pro`,
+          false
+        );
+      }, 1000);
+      
+      // إشعار نهائي بعد ثانيتين
+      setTimeout(() => {
+        sendTelegramNotification(
+          '🎉 الاختبار مكتمل', 
+          `شكراً لاستخدام Train Alert Pro\n\nالنظام يعمل بكفاءة عالية\n\n✨ تم بنجاح`,
+          false
+        );
+      }, 2000);
+      
+      showToast('تم إرسال رسالة الاختبار بنجاح - يجب أن يرن هاتفك الآن!');
+    } else {
+      testStatus.textContent = '❌ فشل الإرسال - تحقق من معرف الشات';
+      testStatus.style.color = 'var(--danger)';
+      showToast('فشل إرسال رسالة الاختبار - تحقق من معرف الشات');
+    }
+    
+    // إعادة تعيين الزر بعد 3 ثوانٍ
+    setTimeout(() => {
+      testBtn.classList.remove('testing');
+      testBtn.disabled = false;
+    }, 3000);
+  });
 }
 
 /* Helpers محسنة */
@@ -2609,6 +2761,12 @@ function closeSidebar() {
   document.getElementById('overlay').classList.remove('active');
 }
 
+/* Test modal functionality */
+function closeTestModal() {
+  document.getElementById('testNotificationModal').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+}
+
 /* Guide modal functionality */
 function openGuide() {
   document.getElementById('telegramGuideModal').classList.add('active');
@@ -2655,7 +2813,11 @@ document.getElementById('overlay').addEventListener('click', () => {
   closeSidebar();
   closeAbout();
   closeGuide();
+  closeTestModal();
 });
+
+// Test modal
+document.getElementById('closeTestModal').addEventListener('click', closeTestModal);
 
 // Guide modal
 document.getElementById('openGuide').addEventListener('click', (e) => {
