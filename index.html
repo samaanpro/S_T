@@ -1193,7 +1193,7 @@ input:checked + .toggle-slider:before {
   height: 100%;
   background: rgba(0,0,0,0.8);
   z-index: 10000;
-  display: flex;
+  display: none; /* تغيير من flex إلى none */
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -1426,6 +1426,25 @@ input:checked + .toggle-slider:before {
     box-shadow: 0 8px 40px rgba(201,168,74,0.5), 0 0 30px rgba(201,168,74,0.4);
   }
 }
+
+/* Skip button for telegram setup */
+.skip-setup-btn {
+  background: transparent;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 10px;
+}
+
+.skip-setup-btn:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--text);
+  color: var(--text);
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -1507,6 +1526,8 @@ input:checked + .toggle-slider:before {
       <div class="telegram-setup-buttons">
         <button id="verifyTelegramBtn" class="verify-btn">تحقق وابدأ</button>
       </div>
+      
+      <button id="skipSetupBtn" class="skip-setup-btn">تخطي الإعداد (لن تعمل الإشعارات)</button>
     </div>
   </div>
 
@@ -3329,6 +3350,12 @@ document.getElementById('verifyTelegramBtn').addEventListener('click', () => {
   });
 });
 
+// Skip setup button
+document.getElementById('skipSetupBtn').addEventListener('click', () => {
+  document.getElementById('telegramSetupModal').style.display = 'none';
+  showToast('تم تخطي إعداد تيليجرام - لن تعمل الإشعارات');
+});
+
 // تقييد إدخال معرف الشات لأرقام فقط في النافذة الإجبارية
 document.getElementById('mandatoryChatId').addEventListener('input', (e) => {
   e.target.value = e.target.value.replace(/\D/g, '');
@@ -3361,13 +3388,30 @@ function init(){
       setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
         
-        // التحقق من إعدادات تيليجرام
+        // التحقق من إعدادات تيليجرام المحفوظة
         const savedChatId = localStorage.getItem('telegramChatId');
         const telegramEnabled = localStorage.getItem('telegramEnabled') === 'true';
         
-        // عرض نافذة إعداد تيليجرام فقط إذا لم يتم حفظ معرف الشات من قبل
-        if (!savedChatId || !telegramEnabled) {
+        // عرض نافذة إعداد تيليجرام فقط إذا لم يتم حفظ معرف الشات من قبل أو كان غير مفعّل
+        if (!savedChatId || savedChatId.trim() === '' || !telegramEnabled) {
           document.getElementById('telegramSetupModal').style.display = 'flex';
+        } else {
+          // إذا كان معرف الشات محفوظًا ومفعلاً، قم بتحديث الواجهة مباشرة
+          telegramSettings.chatId = savedChatId;
+          telegramSettings.enabled = telegramEnabled;
+          document.getElementById('telegramChatId').value = savedChatId;
+          document.getElementById('telegramToggle').checked = telegramEnabled;
+          updateTelegramStatus();
+          
+          // إرسال رسالة ترحيب إذا كان التطبيق يفتح لأول مرة في هذه الجلسة
+          const sessionStart = sessionStorage.getItem('sessionStart');
+          if (!sessionStart) {
+            sessionStorage.setItem('sessionStart', 'true');
+            sendTelegramNotification(
+              '👋 مرحباً بك!', 
+              `تم فتح تطبيق Train Alert Pro بنجاح\n\n⏰ وقت الفتح: ${new Date().toLocaleTimeString('ar-EG')}\n\nالتطبيق جاهز للاستخدام`
+            );
+          }
         }
       }, 500);
     }
@@ -3456,4 +3500,3 @@ window.addEventListener('focus', () => {
 </script>
 </body>
 </html>
-
