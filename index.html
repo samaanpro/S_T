@@ -1297,18 +1297,6 @@ input:checked + .toggle-slider:before {
   box-shadow: 0 8px 20px rgba(201,168,74,0.3);
 }
 
-.telegram-setup-buttons .skip-btn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: var(--muted);
-}
-
-.telegram-setup-buttons .skip-btn:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
 .telegram-setup-status {
   margin-top: 15px;
   padding: 10px;
@@ -1413,6 +1401,31 @@ input:checked + .toggle-slider:before {
 .step-completed::before {
   content: "✅";
 }
+
+/* Continuous notification styling */
+.continuous-notification {
+  animation: continuousPulse 2s infinite;
+}
+
+@keyframes continuousPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Persistent arrival notification */
+.arrival-notification.persistent {
+  animation: persistentGlow 1.5s infinite;
+}
+
+@keyframes persistentGlow {
+  0%, 100% { 
+    box-shadow: 0 8px 30px rgba(201,168,74,0.3), 0 0 20px rgba(201,168,74,0.2);
+  }
+  50% { 
+    box-shadow: 0 8px 40px rgba(201,168,74,0.5), 0 0 30px rgba(201,168,74,0.4);
+  }
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -1493,7 +1506,6 @@ input:checked + .toggle-slider:before {
       
       <div class="telegram-setup-buttons">
         <button id="verifyTelegramBtn" class="verify-btn">تحقق وابدأ</button>
-        <button id="skipTelegramBtn" class="skip-btn">تخطي</button>
       </div>
     </div>
   </div>
@@ -2083,6 +2095,11 @@ let notifications = [];
 let positionUpdateInterval = 1000; // تحديث الموقع كل ثانية
 let lastPositionUpdate = 0;
 
+// متغيرات للتحكم في الإشعارات المستمرة
+let continuousNotificationInterval = null;
+let arrivalNotificationShown = false;
+let userConfirmedArrival = false; // متغير جديد لتتبع تأكيد المستخدم
+
 /* مراقبة جودة الشبكة */
 function monitorNetworkQuality() {
   if (!navigator.onLine) {
@@ -2426,58 +2443,69 @@ function stopRing(){
   } 
 }
 
-// تعديل دالة الوصول للمحطة لإرسال إشعارات تيليجرام عاجلة
+// تعديل دالة الوصول للمحطة لإرسال إشعارات تيليجرام عاجلة ومستمرة
 function arrivalAction(station){
   startRing();
   addNotification(`وصلت تقريباً - ${station.name}`, 'تأكد من متعلقاتك وانزل بأمان');
-  
-  // إرسال إشعارات تيليجرام عاجلة ومتعددة
-  if (telegramSettings.enabled) {
-    // إشعار عاجل أول
-    sendTelegramNotification(
-      `🚉 وصول إلى المحطة!`, 
-      `لقد وصلت إلى محطة ${station.name}\n\n🚨 *تنبيه عاجل* 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-      true // عاجل
-    ).then(success => {
-      if (success) {
-        // إرسال إشعار تأكيد بعد ثانية
-        setTimeout(() => {
-          sendTelegramNotification(
-            `⚠️ تأكيد الوصول`, 
-            `تأكيد: وصول إلى محطة ${station.name}\n\nيرجى النزول بأمان\n\n📍 ${station.name}`,
-            true
-          );
-        }, 1000);
-        
-        // إشعار نهائي بعد ثانيتين
-        setTimeout(() => {
-          sendTelegramNotification(
-            `✅ تم الوصول`, 
-            `✅ تم الوصول بنجاح إلى محطة ${station.name}\n\nشكراً لاستخدامك Train Alert Pro`,
-            false
-          );
-        }, 2000);
-      }
-    });
-  }
   
   // عرض نافذة إشعار الوصول مع شعار محطة القطار
   const arrivalNotification = document.getElementById('arrivalNotification');
   const arrivalStationName = document.getElementById('arrivalStationName');
   arrivalStationName.textContent = station.name;
-  arrivalNotification.classList.add('active');
+  arrivalNotification.classList.add('active', 'persistent');
+  arrivalNotificationShown = true;
   
   // إضافة تأثير اهتزاز عاجل
   if (document.getElementById('vibrationToggle').checked) {
     navigator.vibrate && navigator.vibrate([200, 100, 200, 100, 200]);
   }
   
-  // لا نحتاج إلى تأكيد من المستخدم بعد الآن
-  setTimeout(() => {
-    arrivalNotification.classList.remove('active');
-    stopRing();
-    arrivedFlag = false;
-  }, 5000);
+  // بدء إرسال إشعارات تيليجرام المستمرة
+  if (telegramSettings.enabled && !continuousNotificationInterval) {
+    // إرسال إشعار عاجل أول
+    sendTelegramNotification(
+      `🚉 وصول إلى المحطة!`, 
+      `لقد وصلت إلى محطة ${station.name}\n\n🚨 *تنبيه عاجل* 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+      true // عاجل
+    );
+    
+    // إرسال إشعارات مستمرة كل 30 ثانية
+    continuousNotificationInterval = setInterval(() => {
+      if (isTracking && telegramSettings.enabled && !userConfirmedArrival) {
+        sendTelegramNotification(
+          `🚉 تذكير بالوصول`, 
+          `أنت الآن في محطة ${station.name}\n\n⚠️ *يرجى الانتباه* ⚠️\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+          true // عاجل
+        );
+      }
+    }, 30000); // كل 30 ثانية
+  }
+}
+
+// دالة لإيقاف الإشعارات المستمرة
+function stopContinuousNotifications() {
+  if (continuousNotificationInterval) {
+    clearInterval(continuousNotificationInterval);
+    continuousNotificationInterval = null;
+  }
+  
+  // إرسال إشعار نهائي عند إيقاف التتبع
+  if (telegramSettings.enabled && arrivalNotificationShown) {
+    sendTelegramNotification(
+      `✅ تم إيقاف التتبع`, 
+      `تم إيقاف تتبع الرحلة بنجاح\n\nشكراً لاستخدامك Train Alert Pro\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+      false
+    );
+  }
+  
+  // إخفاء نافذة الإشعار
+  const arrivalNotification = document.getElementById('arrivalNotification');
+  arrivalNotification.classList.remove('active', 'persistent');
+  arrivalNotificationShown = false;
+  
+  stopRing();
+  arrivedFlag = false;
+  userConfirmedArrival = false; // إعادة تعيين تأكيد المستخدم
 }
 
 /* Map init مع تحسينات الأداء */
@@ -2794,13 +2822,12 @@ function updatePosition(lat,lng,accuracy,ts = Date.now()){
     preWarnAction(STATIONS[nearestGlobal], remainingKm);
   }
 
-  // arrival
+  // arrival - تعديل لعدم إيقاف الإشعارات تلقائياً
   if((remaining === 0 || remainingKm <= 0.6) && !arrivedFlag){
     arrivedFlag = true;
     arrivalAction(STATIONS[destIndex]);
-  } else if(!(remaining === 0 || remainingKm <= 0.6)){
-    arrivedFlag = false;
   }
+  // لا يتم إعادة تعيين arrivedFlag تلقائياً
 
   lastPos = { lat, lng }; lastTs = ts;
 }
@@ -2912,6 +2939,11 @@ function startTracking(){
   isMainTab = true;
   trackingState.active = true;
   
+  // إعادة تعيين متغيرات الوصول
+  arrivedFlag = false;
+  arrivalNotificationShown = false;
+  userConfirmedArrival = false;
+  
   // تحديث واجهة المستخدم
   const trackingBtn = document.getElementById('trackingBtn');
   const trackingIcon = document.getElementById('trackingIcon');
@@ -2986,7 +3018,10 @@ function stopTracking(){
     navigator.geolocation.clearWatch(watchId); 
     watchId = null; 
   }
-  stopRing();
+  
+  // إيقاف الإشعارات المستمرة
+  stopContinuousNotifications();
+  
   releaseWakeLock();
   
   isTracking = false;
@@ -3002,14 +3037,6 @@ function stopTracking(){
   trackingText.textContent = 'ابدأ التتبع';
   
   updateTrackingStatusInfo('التتبع غير نشط');
-  
-  // إرسال إشعار تيليجرام عند إيقاف التتبع
-  if (telegramSettings.enabled) {
-    sendTelegramNotification(
-      `⏹️ إيقاف التتبع`, 
-      `تم إيقاف تتبع الرحلة\n\n⏰ وقت الإيقاف: ${new Date().toLocaleTimeString('ar-EG')}`
-    );
-  }
   
   isMainTab = false;
 }
@@ -3230,12 +3257,14 @@ document.getElementById('retryMapBtn').addEventListener('click', () => {
   initMap();
 });
 
-// Close arrival notification button - تعديل لإيقاف التتبع
+// Close arrival notification button - تعديل لإيقاف التتبع فقط عند الضغط على موافق
 document.getElementById('closeArrivalNotification').addEventListener('click', () => {
-  document.getElementById('arrivalNotification').classList.remove('active');
-  stopRing();
-  arrivedFlag = false;
-  stopTracking(); // إيقاف التتبع عند الضغط على "موافق"
+  // تعيين تأكيد المستخدم
+  userConfirmedArrival = true;
+  
+  // إيقاف الإشعارات المستمرة والتتبع
+  stopContinuousNotifications();
+  stopTracking();
 });
 
 // تقييد إدخال معرف الشات لأرقام فقط
@@ -3300,11 +3329,6 @@ document.getElementById('verifyTelegramBtn').addEventListener('click', () => {
   });
 });
 
-document.getElementById('skipTelegramBtn').addEventListener('click', () => {
-  document.getElementById('telegramSetupModal').style.display = 'none';
-  showToast('يمكنك إعداد تيليجرام لاحقاً من الإعدادات');
-});
-
 // تقييد إدخال معرف الشات لأرقام فقط في النافذة الإجبارية
 document.getElementById('mandatoryChatId').addEventListener('input', (e) => {
   e.target.value = e.target.value.replace(/\D/g, '');
@@ -3341,8 +3365,8 @@ function init(){
         const savedChatId = localStorage.getItem('telegramChatId');
         const telegramEnabled = localStorage.getItem('telegramEnabled') === 'true';
         
+        // عرض نافذة إعداد تيليجرام فقط إذا لم يتم حفظ معرف الشات من قبل
         if (!savedChatId || !telegramEnabled) {
-          // عرض نافذة إعداد تيليجرام الإجبارية
           document.getElementById('telegramSetupModal').style.display = 'flex';
         }
       }, 500);
