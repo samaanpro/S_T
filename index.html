@@ -125,6 +125,7 @@ body{position:relative}
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .nav-link {
@@ -286,6 +287,27 @@ body{position:relative}
     flex-direction: column;
     gap: 10px;
     text-align: center;
+  }
+  
+  /* تحسينات لعرض مؤشرات الحالة في الموبايل */
+  .header-nav {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .status-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .status-indicators > div {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
   }
 }
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:rgba(0,0,0,0.8);color:#fff;padding:12px 18px;border-radius:12px;z-index:99999; backdrop-filter: blur(10px); box-shadow:var(--shadow-2); animation:slideUp 0.3s ease-out}
@@ -774,65 +796,6 @@ input:checked + .toggle-slider:before {
   font-weight: bold;
 }
 
-/* Arrival notification animation */
-.arrival-notification {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--card);
-  border-radius: 16px;
-  padding: 30px;
-  max-width: 400px;
-  width: 90%;
-  z-index: 1002;
-  box-shadow: var(--shadow-2);
-  display: none;
-  text-align: center;
-  animation: slideDown 0.5s ease-out;
-}
-
-.arrival-notification.active {
-  display: block;
-}
-
-.arrival-notification h2 {
-  color: var(--gold);
-  margin-bottom: 15px;
-  font-size: 24px;
-}
-
-.arrival-notification p {
-  margin-bottom: 20px;
-  color: var(--text);
-}
-
-.arrival-notification .arrival-icon {
-  font-size: 60px;
-  margin-bottom: 20px;
-  animation: bounce 1s infinite;
-}
-
-@keyframes slideDown {
-  from {
-    transform: translate(-50%, -70%);
-    opacity: 0;
-  }
-  to {
-    transform: translate(-50%, -50%);
-    opacity: 1;
-  }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
 /* Tutorial steps */
 .tutorial-steps {
   background: rgba(255,255,255,0.03);
@@ -992,20 +955,6 @@ input:checked + .toggle-slider:before {
   .test-notification-modal {
     padding: 20px;
     width: 95%;
-  }
-}
-
-/* Persistent arrival notification */
-.arrival-notification.persistent {
-  animation: persistentGlow 1.5s infinite;
-}
-
-@keyframes persistentGlow {
-  0%, 100% { 
-    box-shadow: 0 8px 30px rgba(201,168,74,0.3), 0 0 20px rgba(201,168,74,0.2);
-  }
-  50% { 
-    box-shadow: 0 8px 40px rgba(201,168,74,0.5), 0 0 30px rgba(201,168,74,0.4);
   }
 }
 
@@ -1488,6 +1437,445 @@ input:checked + .toggle-slider:before {
   background: var(--danger);
   color: #fff;
 }
+
+/* Enhanced notification styles for better visibility */
+.enhanced-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  z-index: 10004;
+  box-shadow: var(--shadow-2);
+  display: none;
+  text-align: center;
+  animation: slideDown 0.5s ease-out;
+  border: 2px solid var(--gold);
+}
+
+.enhanced-notification.active {
+  display: block;
+}
+
+.enhanced-notification h2 {
+  color: var(--gold);
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.enhanced-notification p {
+  margin-bottom: 20px;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.enhanced-notification .notification-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  animation: bounce 1s infinite;
+}
+
+.enhanced-notification .notification-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.enhanced-notification .notification-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.enhanced-notification .primary-btn {
+  background: var(--gradient-1);
+  color: #07120b;
+}
+
+.enhanced-notification .secondary-btn {
+  background: transparent;
+  border: 2px solid var(--muted);
+  color: var(--muted);
+}
+
+.enhanced-notification .primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(201,168,74,0.3);
+}
+
+.enhanced-notification .secondary-btn:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--text);
+  color: var(--text);
+}
+
+/* Arrival notification modal */
+.arrival-notification-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 450px;
+  width: 90%;
+  z-index: 10005;
+  box-shadow: var(--shadow-2);
+  display: none;
+  text-align: center;
+  animation: slideDown 0.5s ease-out;
+  border: 3px solid var(--danger);
+}
+
+.arrival-notification-modal.active {
+  display: block;
+}
+
+.arrival-notification-modal h2 {
+  color: var(--danger);
+  margin-bottom: 15px;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.arrival-notification-modal p {
+  margin-bottom: 20px;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.arrival-notification-modal .arrival-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: urgentPulse 1s infinite;
+}
+
+.arrival-notification-modal .arrival-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.arrival-notification-modal .arrival-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.arrival-notification-modal .confirm-btn {
+  background: var(--danger);
+  color: white;
+  box-shadow: 0 4px 15px rgba(244,67,54,0.3);
+}
+
+.arrival-notification-modal .confirm-btn:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(244,67,54,0.4);
+}
+
+.arrival-notification-modal .cancel-btn {
+  background: transparent;
+  border: 2px solid var(--muted);
+  color: var(--muted);
+}
+
+.arrival-notification-modal .cancel-btn:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--text);
+  color: var(--text);
+}
+
+/* Service Worker status indicator */
+.sw-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(76,175,80,0.1);
+  color: var(--success);
+}
+
+.sw-status.disabled {
+  background: rgba(244,67,54,0.1);
+  color: var(--danger);
+}
+
+.sw-status::before {
+  content: "🔄";
+}
+
+/* Background sync status */
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(76,175,80,0.1);
+  color: var(--success);
+}
+
+.sync-status.pending {
+  background: rgba(255,152,0,0.1);
+  color: var(--warning);
+}
+
+.sync-status.failed {
+  background: rgba(244,67,54,0.1);
+  color: var(--danger);
+}
+
+.sync-status::before {
+  content: "🔄";
+}
+
+/* Offline indicator */
+.offline-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: var(--danger);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: none;
+  z-index: 10005;
+  animation: slideUp 0.3s ease-out;
+}
+
+.offline-indicator.show {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.offline-indicator::before {
+  content: "📡";
+}
+
+/* Battery status indicator */
+.battery-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(76,175,80,0.1);
+  color: var(--success);
+}
+
+.battery-status.low {
+  background: rgba(255,152,0,0.1);
+  color: var(--warning);
+}
+
+.battery-status.critical {
+  background: rgba(244,67,54,0.1);
+  color: var(--danger);
+}
+
+.battery-status::before {
+  content: "🔋";
+}
+
+/* Performance optimizations for mobile */
+@media (max-width: 768px) {
+  .card {
+    padding: 12px;
+  }
+  
+  .header {
+    padding: 6px 4px;
+  }
+  
+  .controls-row {
+    gap: 6px;
+  }
+  
+  .input-group {
+    margin-bottom: 8px;
+  }
+  
+  .btn {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  
+  .station {
+    padding: 10px;
+  }
+  
+  .station .name {
+    font-size: 14px;
+  }
+  
+  .station .small {
+    font-size: 12px;
+  }
+}
+
+/* Animation for slide down */
+@keyframes slideDown {
+  from {
+    transform: translate(-50%, -70%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+/* Animation for bounce */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Animation for urgent pulse */
+@keyframes urgentPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Animation for glow */
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 8px 30px rgba(201,168,74,0.3), 0 0 20px rgba(201,168,74,0.2);
+  }
+  50% { 
+    box-shadow: 0 8px 40px rgba(201,168,74,0.5), 0 0 30px rgba(201,168,74,0.4);
+  }
+}
+
+/* Persistent arrival notification */
+.arrival-notification.persistent {
+  animation: persistentGlow 1.5s infinite;
+}
+
+@keyframes persistentGlow {
+  0%, 100% { 
+    box-shadow: 0 8px 30px rgba(201,168,74,0.3), 0 0 20px rgba(201,168,74,0.2);
+  }
+  50% { 
+    box-shadow: 0 8px 40px rgba(201,168,74,0.5), 0 0 30px rgba(201,168,74,0.4);
+  }
+}
+
+/* Loading screen improvements */
+.loading-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-top: 10px;
+}
+
+.loading-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+.loading-site-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 15px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loading-site-name::before {
+  content: "🌐";
+}
+
+/* GPS improvement styles */
+.gps-improvement-panel {
+  background: rgba(255,152,0,0.1);
+  border: 1px solid var(--warning);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.gps-improvement-title {
+  color: var(--warning);
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gps-improvement-title::before {
+  content: "⚠️";
+}
+
+.gps-improvement-tips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gps-improvement-tips li {
+  padding: 5px 0;
+  font-size: 13px;
+  color: var(--text);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.gps-improvement-tips li::before {
+  content: "•";
+  color: var(--warning);
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.gps-status-improving {
+  animation: gpsImproving 2s infinite;
+}
+
+@keyframes gpsImproving {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -1496,7 +1884,8 @@ input:checked + .toggle-slider:before {
       <div class="spinner" aria-hidden="true"></div>
       <div>
         <div style="font-weight:800;font-size:20px">Train Alert Pro</div>
-        <div style="color:var(--muted)">جارٍ التحميل — انتظر لحظة</div>
+        <div class="loading-subtitle">جارٍ تفعيل الإشعارات — انتظر لحظة</div>
+        <div class="loading-site-name">TrainAlertPro.com</div>
         <div class="progress-bar" style="margin-top:12px">
           <div class="progress" id="loadingProgress"></div>
         </div>
@@ -1573,6 +1962,17 @@ input:checked + .toggle-slider:before {
     </div>
   </div>
 
+  <!-- Arrival Notification Modal -->
+  <div class="arrival-notification-modal" id="arrivalNotificationModal">
+    <div class="arrival-icon">🚉</div>
+    <h2 id="arrivalNotificationTitle">لقد وصلت!</h2>
+    <p id="arrivalNotificationBody">أنت الآن في محطة الوجهة</p>
+    <div class="arrival-actions">
+      <button id="confirmArrivalBtn" class="arrival-btn confirm-btn">موافق - إيقاف التتبع</button>
+      <button id="cancelArrivalBtn" class="arrival-btn cancel-btn">تجاهل</button>
+    </div>
+  </div>
+
   <!-- Main Header -->
   <header class="main-header">
     <div class="header-content">
@@ -1587,9 +1987,12 @@ input:checked + .toggle-slider:before {
       </div>
       <nav class="header-nav">
         <a href="#" class="nav-link about" id="aboutLink">حول التطبيق</a>
-        <div class="network-status" id="networkStatus">اتصال ممتاز</div>
-        <div class="gps-status" id="gpsStatus">GPS جيد</div>
-        <div class="local-notification-status" id="localNotificationStatus">الإشعارات</div>
+        <div class="status-indicators">
+          <div class="network-status" id="networkStatus">اتصال ممتاز</div>
+          <div class="gps-status" id="gpsStatus">GPS جيد</div>
+          <div class="battery-status" id="batteryStatus">البطارية جيدة</div>
+          <div class="local-notification-status" id="localNotificationStatus">الإشعارات</div>
+        </div>
       </nav>
     </div>
   </header>
@@ -1630,6 +2033,8 @@ input:checked + .toggle-slider:before {
         <li>نظام تخزين محلي آمن للبيانات</li>
         <li>استهلاك منخفض للبطارية والبيانات</li>
         <li>إشعارات فورية محلية بدون تليجرام</li>
+        <li>دعم Service Worker للعمل بدون إنترنت</li>
+        <li>تحسينات الأداء للأجهزة منخفضة المواصفات</li>
       </ul>
 
       <div class="performance-info">
@@ -1721,6 +2126,14 @@ input:checked + .toggle-slider:before {
           <span class="toggle-slider"></span>
         </label>
       </div>
+      
+      <div class="sidebar-option">
+        <span>وضع توفير البطارية</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="batterySaverToggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
     </div>
     
     <div class="sidebar-section">
@@ -1774,6 +2187,17 @@ input:checked + .toggle-slider:before {
             <span class="toggle-slider"></span>
           </label>
         </div>
+        
+        <div class="notification-setting">
+          <div>
+            <div class="notification-setting-label">إشعارات معززة</div>
+            <div class="notification-setting-description">إشعارات أكبر وأوضح للسفر</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="enhancedNotificationsToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
       </div>
       
       <div style="margin-top: 10px; display: flex; gap: 8px">
@@ -1815,6 +2239,7 @@ input:checked + .toggle-slider:before {
           <button id="testNormalNotificationBtn" class="test-notification-btn">عادي</button>
           <button id="testWarningNotificationBtn" class="test-notification-btn warning">تحذير</button>
           <button id="testArrivalNotificationBtn" class="test-notification-btn arrival">وصول</button>
+          <button id="testEnhancedNotificationBtn" class="test-notification-btn" style="background: var(--accent); color: white;">معزز</button>
         </div>
       </div>
     </div>
@@ -1865,6 +2290,14 @@ input:checked + .toggle-slider:before {
         <div class="debug-info">
           <span class="debug-label">آخر تحديث:</span>
           <span class="debug-value" id="debugLastUpdate">غير محدد</span>
+        </div>
+        <div class="debug-info">
+          <span class="debug-label">Service Worker:</span>
+          <span class="debug-value" id="debugServiceWorker">غير محدد</span>
+        </div>
+        <div class="debug-info">
+          <span class="debug-label">مستوى البطارية:</span>
+          <span class="debug-value" id="debugBatteryLevel">غير محدد</span>
         </div>
       </div>
     </div>
@@ -1961,22 +2394,91 @@ input:checked + .toggle-slider:before {
 
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-  <!-- Arrival Notification Modal -->
-  <div class="arrival-notification" id="arrivalNotification">
-    <div class="arrival-icon">🚉</div>
-    <h2>لقد وصلت إلى المحطة!</h2>
-    <p id="arrivalStationName">اسم المحطة</p>
-    <p>تأكد من متعلقاتك وانزل بأمان</p>
-    <button id="closeArrivalNotification" class="btn">موافق</button>
+  <!-- Enhanced Notification Modal -->
+  <div class="enhanced-notification" id="enhancedNotification">
+    <div class="notification-icon" id="enhancedNotificationIcon">🔔</div>
+    <h2 id="enhancedNotificationTitle">عنوان الإشعار</h2>
+    <p id="enhancedNotificationBody">نص الإشعار</p>
+    <div class="notification-actions">
+      <button id="enhancedNotificationPrimary" class="notification-btn primary-btn">موافق</button>
+      <button id="enhancedNotificationSecondary" class="notification-btn secondary-btn">تجاهل</button>
+    </div>
+  </div>
+
+  <!-- Offline Indicator -->
+  <div class="offline-indicator" id="offlineIndicator">
+    <span>أنت الآن في وضع عدم الاتصال</span>
   </div>
 
 <script>
+// Service Worker Registration for PWA functionality
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('data:text/javascript,' + encodeURIComponent(`
+      self.addEventListener('install', event => {
+        self.skipWaiting();
+      });
+      
+      self.addEventListener('activate', event => {
+        event.waitUntil(clients.claim());
+      });
+      
+      self.addEventListener('push', event => {
+        const options = {
+          body: event.data ? event.data.text() : 'Train Alert Pro',
+          icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"%3E%3Cdefs%3E%3ClinearGradient id="a" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23c9a84a"/%3E%3Cstop offset="100%25" style="stop-color:%23e0c77b"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="32" height="32" rx="6" fill="%230b0f12"/%3E%3Crect x="4" y="4" width="24" height="24" rx="4" fill="url(%23a)"/%3E%3Ctext x="16" y="22" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="%230b0f12"%3ESN%3C/text%3E%3C/svg%3E',
+          badge: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"%3E%3Cdefs%3E%3ClinearGradient id="a" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23c9a84a"/%3E%3Cstop offset="100%25" style="stop-color:%23e0c77b"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="32" height="32" rx="6" fill="%230b0f12"/%3E%3Crect x="4" y="4" width="24" height="24" rx="4" fill="url(%23a)"/%3E%3Ctext x="16" y="22" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="%230b0f12"%3ESN%3C/text%3E%3C/svg%3E',
+          tag: 'train-alert',
+          requireInteraction: true,
+          actions: [
+            { action: 'open', title: 'فتح التطبيق' },
+            { action: 'dismiss', title: 'تجاهل' }
+          ]
+        };
+        
+        event.waitUntil(
+          self.registration.showNotification('Train Alert Pro', options)
+        );
+      });
+      
+      self.addEventListener('notificationclick', event => {
+        event.notification.close();
+        
+        if (event.action === 'open') {
+          event.waitUntil(
+            clients.matchAll({ type: 'window' }).then(clientList => {
+              for (let i = 0; i < clientList.length; i++) {
+                const client = clientList[i];
+                if (client.url === '/' && 'focus' in client) {
+                  return client.focus();
+                }
+              }
+              if (clients.openWindow) {
+                return clients.openWindow('/');
+              }
+            })
+          );
+        }
+      });
+    `))
+    .then(registration => {
+      console.log('ServiceWorker registration successful');
+      document.getElementById('debugServiceWorker').textContent = 'مسجل';
+    })
+    .catch(err => {
+      console.log('ServiceWorker registration failed: ', err);
+      document.getElementById('debugServiceWorker').textContent = 'فشل التسجيل';
+    });
+  });
+}
+
 // تحسينات الأداء للإنترنت الخفيف
 const PERFORMANCE_OPTIMIZATIONS = {
   dataSaver: true,
   cacheMapTiles: true,
   limitPositionUpdates: true,
-  compressData: true
+  compressData: true,
+  batterySaver: false
 };
 
 // إعدادات الإشعارات المحلية
@@ -1985,7 +2487,8 @@ let localNotificationSettings = {
   permission: 'default', // 'granted', 'denied', 'default'
   arrivalNotifications: true,
   warningNotifications: true,
-  continuousNotifications: true
+  continuousNotifications: true,
+  enhancedNotifications: true
 };
 
 // سجل الإشعارات
@@ -2069,6 +2572,12 @@ let lastContinuousNotificationTime = 0;
 // متغيرات لتتبع دقة GPS
 let gpsAccuracy = null;
 let lastGpsUpdateTime = null;
+let gpsImprovementAttempts = 0;
+let gpsImprovementInterval = null;
+
+// متغيرات لتتبع حالة البطارية
+let batteryLevel = null;
+let batteryCharging = null;
 
 /* مراقبة جودة الشبكة */
 function monitorNetworkQuality() {
@@ -2150,6 +2659,7 @@ window.addEventListener('online', () => {
   updateConnectionStatus();
   monitorNetworkQuality();
   showToast('تم استعادة الاتصال بالإنترنت');
+  document.getElementById('offlineIndicator').classList.remove('show');
 });
 
 window.addEventListener('offline', () => {
@@ -2158,6 +2668,7 @@ window.addEventListener('offline', () => {
   updateConnectionStatus();
   updateNetworkStatus();
   showToast('انقطع الاتصال بالإنترنت، يعمل التطبيق في وضع عدم الاتصال');
+  document.getElementById('offlineIndicator').classList.add('show');
 });
 
 function updateConnectionStatus() {
@@ -2171,7 +2682,53 @@ function updateConnectionStatus() {
   }
 }
 
-// دالة لتحديث حالة GPS
+// دالة محسنة لتحسين GPS
+function improveGPSAccuracy() {
+  if (!isTracking || gpsAccuracy < 50) return; // GPS جيد بالفعل
+  
+  gpsImprovementAttempts++;
+  
+  // إعادة طلب الموقع بدقة أعلى
+  if (watchId) {
+    navigator.geolocation.clearWatch(watchId);
+  }
+  
+  const highAccuracyOptions = {
+    enableHighAccuracy: true,
+    maximumAge: 1000, // 1 ثانية فقط
+    timeout: 20000     // 20 ثانية
+  };
+  
+  watchId = navigator.geolocation.watchPosition(
+    p => {
+      updatePosition(p.coords.latitude, p.coords.longitude, p.coords.accuracy, p.timestamp || Date.now());
+      
+      // إذا تحسنت الدقة، أوقف محاولات التحسين
+      if (p.coords.accuracy < 50) {
+        stopGPSImprovement();
+        showToast('تم تحسين دقة GPS بنجاح');
+      }
+    }, 
+    err => {
+      console.warn('GPS improvement error:', err);
+      if (gpsImprovementAttempts >= 3) {
+        stopGPSImprovement();
+        showToast('لم يتم تحسين GPS، سيتم استخدام الدقة المتاحة');
+      }
+    }, 
+    highAccuracyOptions
+  );
+}
+
+function stopGPSImprovement() {
+  if (gpsImprovementInterval) {
+    clearInterval(gpsImprovementInterval);
+    gpsImprovementInterval = null;
+  }
+  gpsImprovementAttempts = 0;
+}
+
+// دالة لتحديث حالة GPS مع تحسينات
 function updateGpsStatus(accuracy) {
   const gpsStatus = document.getElementById('gpsStatus');
   if (!gpsStatus) return;
@@ -2189,18 +2746,80 @@ function updateGpsStatus(accuracy) {
     return;
   }
   
+  // تحسين عتبات الدقة
   if (accuracy < 10) {
     gpsStatus.textContent = 'GPS ممتاز';
     gpsStatus.className = 'gps-status';
-  } else if (accuracy < 50) {
+    stopGPSImprovement();
+  } else if (accuracy < 30) {
     gpsStatus.textContent = 'GPS جيد';
     gpsStatus.className = 'gps-status';
+    stopGPSImprovement();
   } else if (accuracy < 100) {
     gpsStatus.textContent = 'GPS ضعيف';
     gpsStatus.className = 'gps-status weak';
+    
+    // بدء تحسين GPS إذا كان التتبع نشطاً
+    if (isTracking && !gpsImprovementInterval && gpsImprovementAttempts < 3) {
+      gpsImprovementInterval = setInterval(() => {
+        improveGPSAccuracy();
+      }, 10000); // كل 10 ثوانٍ
+    }
   } else {
     gpsStatus.textContent = 'GPS سيء';
     gpsStatus.className = 'gps-status offline';
+    
+    // محاولة تحسين فورية للدقة السيئة
+    if (isTracking && gpsImprovementAttempts < 3) {
+      improveGPSAccuracy();
+    }
+  }
+}
+
+// دالة لتحديث حالة البطارية
+function updateBatteryStatus(level, charging) {
+  const batteryStatus = document.getElementById('batteryStatus');
+  if (!batteryStatus) return;
+  
+  batteryLevel = level;
+  batteryCharging = charging;
+  
+  // تحديث معلومات التصحيح
+  document.getElementById('debugBatteryLevel').textContent = `${Math.round(level * 100)}% ${charging ? '(شحن)' : ''}`;
+  
+  if (!level) {
+    batteryStatus.style.display = 'none';
+    return;
+  }
+  
+  batteryStatus.style.display = 'flex';
+  
+  if (level > 0.5) {
+    batteryStatus.textContent = 'البطارية جيدة';
+    batteryStatus.className = 'battery-status';
+  } else if (level > 0.2) {
+    batteryStatus.textContent = 'البطارية ضعيفة';
+    batteryStatus.className = 'battery-status low';
+  } else {
+    batteryStatus.textContent = 'البطارية منخفضة';
+    batteryStatus.className = 'battery-status critical';
+  }
+}
+
+// دالة لمراقبة حالة البطارية
+function monitorBatteryStatus() {
+  if ('getBattery' in navigator) {
+    navigator.getBattery().then(battery => {
+      updateBatteryStatus(battery.level, battery.charging);
+      
+      battery.addEventListener('levelchange', () => {
+        updateBatteryStatus(battery.level, battery.charging);
+      });
+      
+      battery.addEventListener('chargingchange', () => {
+        updateBatteryStatus(battery.level, battery.charging);
+      });
+    });
   }
 }
 
@@ -2253,10 +2872,10 @@ function requestNotificationPermission() {
     localNotificationSettings.enabled = permission === 'granted';
     updateLocalNotificationStatus();
     
+    // حفظ حالة الإشعارات في localStorage
     if (permission === 'granted') {
-      showToast('تم تفعيل الإشعارات المحلية بنجاح');
-      // إرسال إشعار ترحيبي
-      sendLocalNotification('مرحباً بك في Train Alert Pro', 'تم تفعيل الإشعارات المحلية بنجاح');
+      localStorage.setItem('notificationsEnabled', 'true');
+      localStorage.setItem('notificationPermission', 'granted');
     }
     
     return permission === 'granted';
@@ -2277,6 +2896,7 @@ function sendLocalNotification(title, body, options = {}) {
       badge: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"%3E%3Cdefs%3E%3ClinearGradient id="a" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23c9a84a"/%3E%3Cstop offset="100%25" style="stop-color:%23e0c77b"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="32" height="32" rx="6" fill="%230b0f12"/%3E%3Crect x="4" y="4" width="24" height="24" rx="4" fill="url(%23a)"/%3E%3Ctext x="16" y="22" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="%230b0f12"%3ESN%3C/text%3E%3C/svg%3E',
       tag: 'train-alert',
       requireInteraction: options.urgent || false,
+      silent: !options.sound,
       ...options
     });
     
@@ -2303,6 +2923,60 @@ function sendLocalNotification(title, body, options = {}) {
   }
 }
 
+// دالة لإرسال إشعار معزز - هذه هي الدالة الرئيسية لجميع الإشعارات
+function sendEnhancedNotification(title, body, icon = '🔔', options = {}) {
+  if (!localNotificationSettings.enabled) {
+    console.log('الإشعارات غير مفعلة');
+    return false;
+  }
+  
+  // عرض نافذة الإشعار المعزز دائماً
+  const enhancedNotification = document.getElementById('enhancedNotification');
+  const enhancedIcon = document.getElementById('enhancedNotificationIcon');
+  const enhancedTitle = document.getElementById('enhancedNotificationTitle');
+  const enhancedBody = document.getElementById('enhancedNotificationBody');
+  const primaryBtn = document.getElementById('enhancedNotificationPrimary');
+  const secondaryBtn = document.getElementById('enhancedNotificationSecondary');
+  
+  enhancedIcon.textContent = icon;
+  enhancedTitle.textContent = title;
+  enhancedBody.textContent = body;
+  
+  // تعيين وظائف الأزرار
+  primaryBtn.onclick = () => {
+    enhancedNotification.classList.remove('active');
+    if (options.primaryAction) {
+      options.primaryAction();
+    }
+  };
+  
+  secondaryBtn.onclick = () => {
+    enhancedNotification.classList.remove('active');
+    if (options.secondaryAction) {
+      options.secondaryAction();
+    }
+  };
+  
+  enhancedNotification.classList.add('active');
+  
+  // إرسال إشعار محلي أيضاً
+  sendLocalNotification(title, body, options);
+  
+  // إضافة إلى سجل الإشعارات
+  addToNotificationHistory(title, body);
+  
+  // تشغيل الصوت والاهتزاز
+  if (options.sound) {
+    playBeep(options.frequency || 880, options.duration || 200);
+  }
+  
+  if (options.vibrate && document.getElementById('vibrationToggle').checked) {
+    navigator.vibrate && navigator.vibrate(options.vibratePattern || [200, 100, 200]);
+  }
+  
+  return true;
+}
+
 // دالة لإضافة إشعار إلى السجل
 function addToNotificationHistory(title, body) {
   const notification = {
@@ -2319,6 +2993,9 @@ function addToNotificationHistory(title, body) {
   if (notificationHistory.length > 20) {
     notificationHistory = notificationHistory.slice(0, 20);
   }
+  
+  // حفظ سجل الإشعارات في localStorage
+  localStorage.setItem('notificationHistory', JSON.stringify(notificationHistory));
   
   updateNotificationHistoryUI();
 }
@@ -2349,6 +3026,7 @@ function updateNotificationHistoryUI() {
 // دالة لمسح سجل الإشعارات
 function clearNotificationHistory() {
   notificationHistory = [];
+  localStorage.setItem('notificationHistory', JSON.stringify(notificationHistory));
   updateNotificationHistoryUI();
   showToast('تم مسح سجل الإشعارات');
 }
@@ -2502,45 +3180,78 @@ function stopRing(){
   } 
 }
 
-// تعديل دالة الوصول للمحطة لإرسال إشعارات محلية عاجلة ومستمرة
-function arrivalAction(station){
-  console.log('وصول إلى المحطة:', station.name);
+// دالة محسنة للوصول مع إشعار معزز
+function showArrivalNotification(station) {
+  const modal = document.getElementById('arrivalNotificationModal');
+  const title = document.getElementById('arrivalNotificationTitle');
+  const body = document.getElementById('arrivalNotificationBody');
+  const confirmBtn = document.getElementById('confirmArrivalBtn');
+  const cancelBtn = document.getElementById('cancelArrivalBtn');
   
+  title.textContent = `🚉 لقد وصلت إلى ${station.name}!`;
+  body.textContent = `أنت الآن في محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`;
+  
+  // إزالة مستمعي الأحداث القديمة
+  const newConfirmBtn = confirmBtn.cloneNode(true);
+  const newCancelBtn = cancelBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+  cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+  
+  // إضافة مستمعي أحداث جديدة
+  newConfirmBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+    userConfirmedArrival = true;
+    stopContinuousNotifications();
+    stopTracking();
+    showToast('تم تأكيد الوصول وإيقاف التتبع');
+  });
+  
+  newCancelBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+    showToast('تم تجاهل إشعار الوصول');
+  });
+  
+  modal.classList.add('active');
+  
+  // تشغيل الرنين والاهتزاز
   startRing();
-  addNotification(`وصلت تقريباً - ${station.name}`, 'تأكد من متعلقاتك وانزل بأمان', true);
-  
-  // عرض نافذة إشعار الوصول مع شعار محطة القطار
-  const arrivalNotification = document.getElementById('arrivalNotification');
-  const arrivalStationName = document.getElementById('arrivalStationName');
-  arrivalStationName.textContent = station.name;
-  arrivalNotification.classList.add('active', 'persistent');
-  arrivalNotificationShown = true;
-  
-  // إضافة تأثير اهتزاز عاجل
   if (document.getElementById('vibrationToggle').checked) {
     navigator.vibrate && navigator.vibrate([200, 100, 200, 100, 200]);
   }
   
-  // بدء إرسال إشعارات محلية مستمرة
-  if (localNotificationSettings.enabled && localNotificationSettings.arrivalNotifications && !continuousNotificationInterval) {
-    // إرسال إشعار عاجل أول
-    sendLocalNotification(
-      `🚉 وصول إلى المحطة!`, 
-      `لقد وصلت إلى محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-      { urgent: true }
-    );
-    
-    // إرسال إشعارات مستمرة كل 30 ثانية
+  // إرسال إشعار محلي أيضاً
+  sendLocalNotification(
+    `🚉 وصول إلى المحطة!`, 
+    `لقد وصلت إلى محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    { urgent: true, sound: true, vibrate: true }
+  );
+  
+  // إضافة إلى سجل الإشعارات
+  addToNotificationHistory(
+    `🚉 وصول إلى ${station.name}`, 
+    `لقد وصلت إلى محطة ${station.name} - تأكد من متعلقاتك`
+  );
+  
+  // بدء إشعارات مستمرة كل 30 ثانية
+  if (localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !continuousNotificationInterval) {
     continuousNotificationInterval = setInterval(() => {
       if (isTracking && localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !userConfirmedArrival) {
-        sendLocalNotification(
-          `🚉 تذكير بالوصول`, 
-          `أنت الآن في محطة ${station.name}\n\n⚠️ يرجى الانتباه ⚠️\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-          { urgent: true }
-        );
+        // إعادة عرض الإشعار المعزز
+        showArrivalNotification(station);
       }
-    }, 10000); // كل 10 ثوانٍ
+    }, 30000); // كل 30 ثانية
   }
+}
+
+// تعديل دالة الوصول للمحطة
+function arrivalAction(station){
+  console.log('وصول إلى المحطة:', station.name);
+  
+  arrivedFlag = true;
+  arrivalNotificationShown = true;
+  
+  // عرض الإشعار المعزز
+  showArrivalNotification(station);
 }
 
 // دالة لإيقاف الإشعارات المستمرة
@@ -2552,21 +3263,28 @@ function stopContinuousNotifications() {
   
   // إرسال إشعار نهائي عند إيقاف التتبع
   if (localNotificationSettings.enabled && arrivalNotificationShown) {
-    sendLocalNotification(
+    sendEnhancedNotification(
       `✅ تم إيقاف التتبع`, 
       `تم إيقاف تتبع الرحلة بنجاح\n\nشكراً لاستخدامك Train Alert Pro\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-      { urgent: false }
+      '✅',
+      {
+        urgent: false,
+        sound: true,
+        vibrate: true,
+        vibratePattern: [100, 50, 100],
+        frequency: 880,
+        duration: 200
+      }
     );
   }
-  
-  // إخفاء نافذة الإشعار
-  const arrivalNotification = document.getElementById('arrivalNotification');
-  arrivalNotification.classList.remove('active', 'persistent');
-  arrivalNotificationShown = false;
   
   stopRing();
   arrivedFlag = false;
   userConfirmedArrival = false; // إعادة تعيين تأكيد المستخدم
+  
+  // إغلاق نافذة الوصول إذا كانت مفتوحة
+  const arrivalModal = document.getElementById('arrivalNotificationModal');
+  arrivalModal.classList.remove('active');
 }
 
 /* Map init مع تحسينات الأداء */
@@ -2744,6 +3462,9 @@ function buildRoute(){
   
   trackingState.startIdx = start;
   trackingState.destIdx = dest;
+  
+  // حفظ حالة المسار في localStorage
+  localStorage.setItem('trackingState', JSON.stringify(trackingState));
   
   renderTimeline();
   const latlngs = routeIndices.map(i=>[STATIONS[i].lat, STATIONS[i].lng]);
@@ -2936,13 +3657,19 @@ function preWarnAction(station, km){
   playBeep(1200,160);
   addNotification(`قبل محطتين - ${station.name}`, `تبقى حوالي ${km.toFixed(2)} كم`);
   
-  // إرسال إشعار محلي
-  if (localNotificationSettings.enabled && localNotificationSettings.warningNotifications) {
-    sendLocalNotification(
-      `⚠️ تحذير قبل محطتين`, 
-      `القطار يقترب من محطة ${station.name}\nالمسافة المتبقية: ${km.toFixed(2)} كم\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`
-    );
-  }
+  // إرسال إشعار معزز للتحذير
+  sendEnhancedNotification(
+    `⚠️ تحذير قبل محطتين`, 
+    `القطار يقترب من محطة ${station.name}\nالمسافة المتبقية: ${km.toFixed(2)} كم\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    '⚠️',
+    {
+      sound: true,
+      vibrate: true,
+      vibratePattern: [100, 50, 100],
+      frequency: 1200,
+      duration: 160
+    }
+  );
   
   const el = document.querySelector(`.station[data-idx="${STATIONS.indexOf(station)}"]`);
   if(el) {
@@ -2967,8 +3694,8 @@ function addNotification(title, body, urgent = false) {
   incrementNotificationCount();
   addNotificationToList(notification);
   
-  // إرسال إشعار محلي
-  sendLocalNotification(title, body, { urgent: urgent });
+  // إرسال إشعار معزز بدلاً من الإشعار العادي
+  sendEnhancedNotification(title, body, '🔔', { urgent: urgent });
   
   // إظهار toast كنسخة احتياطية
   if (!localNotificationSettings.enabled) {
@@ -3029,6 +3756,10 @@ function startTracking(){
   isMainTab = true;
   trackingState.active = true;
   
+  // حفظ حالة التتبع في localStorage
+  localStorage.setItem('isTracking', 'true');
+  localStorage.setItem('trackingState', JSON.stringify(trackingState));
+  
   // إعادة تعيين متغيرات الوصول
   arrivedFlag = false;
   arrivalNotificationShown = false;
@@ -3038,6 +3769,10 @@ function startTracking(){
   lastWarningNotificationTime = 0;
   lastArrivalNotificationTime = 0;
   lastContinuousNotificationTime = 0;
+  
+  // إعادة تعيين متغيرات تحسين GPS
+  gpsImprovementAttempts = 0;
+  stopGPSImprovement();
   
   // تحديث واجهة المستخدم
   const trackingBtn = document.getElementById('trackingBtn');
@@ -3050,20 +3785,29 @@ function startTracking(){
   
   updateTrackingStatusInfo('التتبع نشط - يتم تتبع موقعك');
   
-  // إرسال إشعار محلي عند بدء التتبع
-  if (localNotificationSettings.enabled) {
-    const startStation = STATIONS[trackingState.startIdx].name;
-    const destStation = STATIONS[trackingState.destIdx].name;
-    sendLocalNotification(
-      `🚀 بدء التتبع`, 
-      `تم بدء تتبع الرحلة من ${startStation} إلى ${destStation}\n\n⏰ وقت البدء: ${new Date().toLocaleTimeString('ar-EG')}`
-    );
-  }
+  // إرسال إشعار معزز عند بدء التتبع
+  const startStation = STATIONS[trackingState.startIdx].name;
+  const destStation = STATIONS[trackingState.destIdx].name;
+  
+  sendEnhancedNotification(
+    `🚀 بدء التتبع`, 
+    `تم بدء تتبع الرحلة من ${startStation} إلى ${destStation}\n\n⏰ وقت البدء: ${new Date().toLocaleTimeString('ar-EG')}\n\n📍 سيتم إعلامك قبل كل محطة`,
+    '🚀',
+    {
+      sound: true,
+      vibrate: true,
+      vibratePattern: [100, 50, 100],
+      frequency: 880,
+      duration: 200
+    }
+  );
   
   if('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied'){
     Notification.requestPermission().then(p => {
       if (p === 'granted') {
-        showToast('تم تفعيل الإشعارات بنجاح');
+        // حفظ حالة الإشعارات في localStorage
+        localStorage.setItem('notificationPermission', 'granted');
+        localStorage.setItem('notificationsEnabled', 'true');
       }
     });
   }
@@ -3079,8 +3823,8 @@ function startTracking(){
   
   // استخدام إعدادات محسنة لتحديد الموقع
   const geoOptions = {
-    enableHighAccuracy: networkQuality === 'good',
-    maximumAge: 30000, // 30 ثانية
+    enableHighAccuracy: true, // تفعيل الدقة العالية افتراضياً
+    maximumAge: 5000, // 5 ثوانٍ فقط
     timeout: 15000     // 15 ثانية
   };
   
@@ -3103,6 +3847,13 @@ function startTracking(){
           break;
       }
       showToast(errorMsg);
+      
+      // محاولة تحسين GPS عند الخطأ
+      if (err.code === err.TIMEOUT && gpsImprovementAttempts < 3) {
+        setTimeout(() => {
+          improveGPSAccuracy();
+        }, 2000);
+      }
     }, 
     geoOptions
   );
@@ -3117,10 +3868,17 @@ function stopTracking(){
   // إيقاف الإشعارات المستمرة
   stopContinuousNotifications();
   
+  // إيقاف تحسين GPS
+  stopGPSImprovement();
+  
   releaseWakeLock();
   
   isTracking = false;
   trackingState.active = false;
+  
+  // حفظ حالة التتبع في localStorage
+  localStorage.setItem('isTracking', 'false');
+  localStorage.setItem('trackingState', JSON.stringify(trackingState));
   
   // تحديث واجهة المستخدم
   const trackingBtn = document.getElementById('trackingBtn');
@@ -3253,11 +4011,18 @@ function testLocalNotifications() {
     }
   }, 200);
   
-  // إرسال رسالة اختبار عادية
-  const success = sendLocalNotification(
+  // إرسال رسالة اختبار معززة
+  const success = sendEnhancedNotification(
     '📱 رسالة اختبار', 
     `هذه رسالة اختبار من تطبيق Train Alert Pro\n\nإذا وصلتك هذه الرسالة، فهذا يعني أن نظام التنبيه يعمل بشكل مثالي!\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}\n\n📍 الحالة: يعمل بنجاح`,
-    { urgent: false }
+    '📱',
+    {
+      sound: true,
+      vibrate: true,
+      vibratePattern: [200, 100, 200],
+      frequency: 880,
+      duration: 200
+    }
   );
   
   setTimeout(() => {
@@ -3289,10 +4054,17 @@ function testNormalNotification() {
     return;
   }
   
-  sendLocalNotification(
+  sendEnhancedNotification(
     '📱 إشعار عادي', 
     `هذا إشعار عادي للاختبار\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-    { urgent: false }
+    '📱',
+    {
+      sound: true,
+      vibrate: true,
+      vibratePattern: [100, 50, 100],
+      frequency: 880,
+      duration: 200
+    }
   );
   
   showToast('تم إرسال إشعار عادي');
@@ -3304,10 +4076,17 @@ function testWarningNotification() {
     return;
   }
   
-  sendLocalNotification(
+  sendEnhancedNotification(
     '⚠️ إشعار تحذير', 
     `هذا إشعار تحذير للاختبار\n\nسيتم إرسال هذا النوع من الإشعارات قبل محطتين من الوصول\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-    { urgent: false }
+    '⚠️',
+    {
+      sound: true,
+      vibrate: true,
+      vibratePattern: [100, 50, 100],
+      frequency: 1200,
+      duration: 160
+    }
   );
   
   showToast('تم إرسال إشعار تحذير');
@@ -3319,13 +4098,49 @@ function testArrivalNotification() {
     return;
   }
   
-  sendLocalNotification(
+  sendEnhancedNotification(
     '🚉 إشعار وصول', 
     `هذا إشعار وصول للاختبار\n\nسيتم إرسال هذا النوع من الإشعارات عند الوصول للمحطة\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-    { urgent: true }
+    '🚉',
+    {
+      urgent: true,
+      sound: true,
+      vibrate: true,
+      vibratePattern: [200, 100, 200, 100, 200],
+      frequency: 440,
+      duration: 300
+    }
   );
   
   showToast('تم إرسال إشعار وصول');
+}
+
+function testEnhancedNotification() {
+  if (!localNotificationSettings.enabled) {
+    showToast('يرجى تفعيل الإشعارات المحلية أولاً');
+    return;
+  }
+  
+  sendEnhancedNotification(
+    '🔔 إشعار معزز', 
+    `هذا إشعار معزز للاختبار\n\nيحتوي على خيارات تفاعلية وتأثيرات صوتية واهتزاز\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    '🔔',
+    {
+      sound: true,
+      vibrate: true,
+      vibratePattern: [200, 100, 200],
+      frequency: 880,
+      duration: 200,
+      primaryAction: () => {
+        showToast('تم الضغط على الزر الأساسي');
+      },
+      secondaryAction: () => {
+        showToast('تم الضغط على الزر الثانوي');
+      }
+    }
+  );
+  
+  showToast('تم إرسال إشعار معزز');
 }
 
 /* UI wiring & persistence */
@@ -3337,6 +4152,8 @@ document.getElementById('overlay').addEventListener('click', () => {
   closeSidebar();
   closeAbout();
   closeTestModal();
+  // إغلاق نافذة الوصول أيضاً
+  document.getElementById('arrivalNotificationModal').classList.remove('active');
 });
 
 // Test modal
@@ -3359,6 +4176,7 @@ document.getElementById('destSelect').addEventListener('change', buildRoute);
 document.getElementById('mapToggleSetting').addEventListener('change', (e) => {
   mapVisible = e.target.checked;
   updateMapVisibility();
+  localStorage.setItem('mapVisible', mapVisible ? 'true' : 'false');
 });
 
 document.getElementById('notificationsToggle').addEventListener('change', (e) => {
@@ -3384,6 +4202,19 @@ document.getElementById('dataSaverToggle').addEventListener('change', (e) => {
   localStorage.setItem('dataSaverEnabled', e.target.checked);
   applyDataSaverSettings();
   showToast(e.target.checked ? 'تم تفعيل وضع توفير البيانات' : 'تم إيقاف وضع توفير البيانات');
+});
+
+document.getElementById('batterySaverToggle').addEventListener('change', (e) => {
+  PERFORMANCE_OPTIMIZATIONS.batterySaver = e.target.checked;
+  localStorage.setItem('batterySaverEnabled', e.target.checked);
+  
+  if (e.target.checked) {
+    positionUpdateInterval = 5000; // تحديث أبطأ لتوفير البطارية
+    showToast('تم تفعيل وضع توفير البطارية');
+  } else {
+    positionUpdateInterval = PERFORMANCE_OPTIMIZATIONS.dataSaver ? 3000 : 1000;
+    showToast('تم إيقاف وضع توفير البطارية');
+  }
 });
 
 // Local notifications settings
@@ -3418,12 +4249,19 @@ document.getElementById('continuousNotificationsToggle').addEventListener('chang
   showToast(e.target.checked ? 'تم تفعيل الإشعارات المستمرة' : 'تم إيقاف الإشعارات المستمرة');
 });
 
+document.getElementById('enhancedNotificationsToggle').addEventListener('change', (e) => {
+  localNotificationSettings.enhancedNotifications = e.target.checked;
+  localStorage.setItem('enhancedNotificationsEnabled', e.target.checked);
+  showToast(e.target.checked ? 'تم تفعيل الإشعارات المعززة' : 'تم إيقاف الإشعارات المعززة');
+});
+
 document.getElementById('testLocalNotificationsBtn').addEventListener('click', testLocalNotifications);
 
 // Test notification buttons
 document.getElementById('testNormalNotificationBtn').addEventListener('click', testNormalNotification);
 document.getElementById('testWarningNotificationBtn').addEventListener('click', testWarningNotification);
 document.getElementById('testArrivalNotificationBtn').addEventListener('click', testArrivalNotification);
+document.getElementById('testEnhancedNotificationBtn').addEventListener('click', testEnhancedNotification);
 
 // Clear notifications history
 document.getElementById('clearNotificationsBtn').addEventListener('click', clearNotificationHistory);
@@ -3442,14 +4280,13 @@ document.getElementById('retryMapBtn').addEventListener('click', () => {
   initMap();
 });
 
-// Close arrival notification button - تعديل لإيقاف التتبع فقط عند الضغط على موافق
-document.getElementById('closeArrivalNotification').addEventListener('click', () => {
-  // تعيين تأكيد المستخدم
-  userConfirmedArrival = true;
-  
-  // إيقاف الإشعارات المستمرة والتتبع
-  stopContinuousNotifications();
-  stopTracking();
+// Enhanced notification buttons
+document.getElementById('enhancedNotificationPrimary').addEventListener('click', () => {
+  document.getElementById('enhancedNotification').classList.remove('active');
+});
+
+document.getElementById('enhancedNotificationSecondary').addEventListener('click', () => {
+  document.getElementById('enhancedNotification').classList.remove('active');
 });
 
 // Notification banner button
@@ -3476,7 +4313,6 @@ document.getElementById('allowNotificationsBtn').addEventListener('click', () =>
       
       setTimeout(() => {
         hideNotificationPermissionModal();
-        showToast('تم تفعيل الإشعارات المحلية بنجاح');
       }, 2000);
     } else {
       statusEl.textContent = '❌ لم يتم منح الإذن. يمكنك تفعيل الإشعارات لاحقاً من إعدادات المتصفح';
@@ -3495,8 +4331,132 @@ document.getElementById('laterNotificationsBtn').addEventListener('click', () =>
   showToast('يمكنك تفعيل الإشعارات لاحقاً من إعدادات التطبيق');
 });
 
+// دالة لاستعادة الحالة المحفوظة
+function restoreSavedState() {
+  // استعادة حالة الإشعارات
+  const savedNotificationsEnabled = localStorage.getItem('notificationsEnabled');
+  if (savedNotificationsEnabled !== null) {
+    document.getElementById('notificationsToggle').checked = savedNotificationsEnabled === 'true';
+  }
+  
+  const savedLocalNotificationsEnabled = localStorage.getItem('localNotificationsEnabled');
+  if (savedLocalNotificationsEnabled !== null) {
+    document.getElementById('localNotificationsToggle').checked = savedLocalNotificationsEnabled === 'true';
+    localNotificationSettings.enabled = savedLocalNotificationsEnabled === 'true';
+  }
+  
+  const savedArrivalNotificationsEnabled = localStorage.getItem('arrivalNotificationsEnabled');
+  if (savedArrivalNotificationsEnabled !== null) {
+    document.getElementById('arrivalNotificationsToggle').checked = savedArrivalNotificationsEnabled === 'true';
+    localNotificationSettings.arrivalNotifications = savedArrivalNotificationsEnabled === 'true';
+  }
+  
+  const savedWarningNotificationsEnabled = localStorage.getItem('warningNotificationsEnabled');
+  if (savedWarningNotificationsEnabled !== null) {
+    document.getElementById('warningNotificationsToggle').checked = savedWarningNotificationsEnabled === 'true';
+    localNotificationSettings.warningNotifications = savedWarningNotificationsEnabled === 'true';
+  }
+  
+  const savedContinuousNotificationsEnabled = localStorage.getItem('continuousNotificationsEnabled');
+  if (savedContinuousNotificationsEnabled !== null) {
+    document.getElementById('continuousNotificationsToggle').checked = savedContinuousNotificationsEnabled === 'true';
+    localNotificationSettings.continuousNotifications = savedContinuousNotificationsEnabled === 'true';
+  }
+  
+  const savedEnhancedNotificationsEnabled = localStorage.getItem('enhancedNotificationsEnabled');
+  if (savedEnhancedNotificationsEnabled !== null) {
+    document.getElementById('enhancedNotificationsToggle').checked = savedEnhancedNotificationsEnabled === 'true';
+    localNotificationSettings.enhancedNotifications = savedEnhancedNotificationsEnabled === 'true';
+  }
+  
+  // استعادة حالة الإعدادات الأخرى
+  const savedSoundEnabled = localStorage.getItem('soundEnabled');
+  if (savedSoundEnabled !== null) {
+    document.getElementById('soundToggle').checked = savedSoundEnabled === 'true';
+  }
+  
+  const savedVibrationEnabled = localStorage.getItem('vibrationEnabled');
+  if (savedVibrationEnabled !== null) {
+    document.getElementById('vibrationToggle').checked = savedVibrationEnabled === 'true';
+  }
+  
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
+    document.getElementById('darkModeToggle').checked = savedTheme === 'dark';
+  }
+  
+  const savedMapVisible = localStorage.getItem('mapVisible');
+  if (savedMapVisible !== null) {
+    mapVisible = savedMapVisible === 'true';
+    document.getElementById('mapToggleSetting').checked = mapVisible;
+  }
+  
+  const savedDataSaverEnabled = localStorage.getItem('dataSaverEnabled');
+  if (savedDataSaverEnabled !== null) {
+    document.getElementById('dataSaverToggle').checked = savedDataSaverEnabled === 'true';
+    PERFORMANCE_OPTIMIZATIONS.dataSaver = savedDataSaverEnabled === 'true';
+  }
+  
+  const savedBatterySaverEnabled = localStorage.getItem('batterySaverEnabled');
+  if (savedBatterySaverEnabled !== null) {
+    document.getElementById('batterySaverToggle').checked = savedBatterySaverEnabled === 'true';
+    PERFORMANCE_OPTIMIZATIONS.batterySaver = savedBatterySaverEnabled === 'true';
+  }
+  
+  // استعادة حالة التتبع
+  const savedIsTracking = localStorage.getItem('isTracking');
+  const savedTrackingState = localStorage.getItem('trackingState');
+  
+  if (savedTrackingState) {
+    try {
+      trackingState = JSON.parse(savedTrackingState);
+      updateUIFromTrackingState();
+    } catch (e) {
+      console.error('Error parsing saved tracking state:', e);
+    }
+  }
+  
+  // استعادة سجل الإشعارات
+  const savedNotificationHistory = localStorage.getItem('notificationHistory');
+  if (savedNotificationHistory) {
+    try {
+      notificationHistory = JSON.parse(savedNotificationHistory);
+      updateNotificationHistoryUI();
+    } catch (e) {
+      console.error('Error parsing saved notification history:', e);
+      notificationHistory = [];
+    }
+  }
+  
+  // استعادة حالة الإذن بالإشعارات
+  const savedNotificationPermission = localStorage.getItem('notificationPermission');
+  if (savedNotificationPermission === 'granted') {
+    localNotificationSettings.permission = 'granted';
+    localNotificationSettings.enabled = document.getElementById('localNotificationsToggle').checked;
+    updateLocalNotificationStatus();
+  }
+  
+  // تطبيق إعدادات الأداء
+  applyDataSaverSettings();
+  
+  // إذا كان التتبع نشطاً عند إغلاق الصفحة، اسأل المستخدم إذا كان يريد استعادته
+  if (savedIsTracking === 'true' && trackingState.active) {
+    // لا نعيد التتبع تلقائياً للحفاظ على خصوصية المستخدم
+    // ولكن نعرض للمستخدم خيار استعادته
+    setTimeout(() => {
+      if (confirm('هل تريد استعادة تتبع الرحلة السابقة؟')) {
+        startTracking();
+      }
+    }, 2000);
+  }
+}
+
 /* Init app */
 function init(){
+  // استعادة الحالة المحفوظة أولاً
+  restoreSavedState();
+  
   // طلب إذن الإشعارات فوراً عند تحميل الصفحة
   if ('Notification' in window && Notification.permission === 'default') {
     // إظهار بانر الإشعارات أولاً
@@ -3513,11 +4473,6 @@ function init(){
     localNotificationSettings.enabled = true;
     localNotificationSettings.permission = 'granted';
     updateLocalNotificationStatus();
-    
-    // إرسال إشعار ترحيبي
-    setTimeout(() => {
-      sendLocalNotification('مرحباً بك في Train Alert Pro', 'تم تحميل التطبيق بنجاح وجاهز للاستخدام');
-    }, 2000);
   }
   
   // محاكاة شريط التقدم
@@ -3533,50 +4488,15 @@ function init(){
     }
   }, 100);
   
-  // تحميل الإعدادات المحفوظة
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  document.body.setAttribute('data-theme', savedTheme);
-  
-  mapVisible = localStorage.getItem('mapVisible') === 'true';
-  
-  const soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-  const vibrationEnabled = localStorage.getItem('vibrationEnabled') !== 'false';
-  const notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
-  const dataSaverEnabled = localStorage.getItem('dataSaverEnabled') !== 'false';
-  const localNotificationsEnabled = localStorage.getItem('localNotificationsEnabled') !== 'false';
-  const arrivalNotificationsEnabled = localStorage.getItem('arrivalNotificationsEnabled') !== 'false';
-  const warningNotificationsEnabled = localStorage.getItem('warningNotificationsEnabled') !== 'false';
-  const continuousNotificationsEnabled = localStorage.getItem('continuousNotificationsEnabled') !== 'false';
-  
-  document.getElementById('soundToggle').checked = soundEnabled;
-  document.getElementById('vibrationToggle').checked = vibrationEnabled;
-  document.getElementById('notificationsToggle').checked = notificationsEnabled;
-  document.getElementById('darkModeToggle').checked = savedTheme === 'dark';
-  document.getElementById('mapToggleSetting').checked = mapVisible;
-  document.getElementById('dataSaverToggle').checked = dataSaverEnabled;
-  document.getElementById('localNotificationsToggle').checked = localNotificationsEnabled;
-  document.getElementById('arrivalNotificationsToggle').checked = arrivalNotificationsEnabled;
-  document.getElementById('warningNotificationsToggle').checked = warningNotificationsEnabled;
-  document.getElementById('continuousNotificationsToggle').checked = continuousNotificationsEnabled;
-  
-  // تحديث إعدادات الإشعارات المحلية
-  localNotificationSettings.enabled = localNotificationsEnabled && Notification.permission === 'granted';
-  localNotificationSettings.arrivalNotifications = arrivalNotificationsEnabled;
-  localNotificationSettings.warningNotifications = warningNotificationsEnabled;
-  localNotificationSettings.continuousNotifications = continuousNotificationsEnabled;
-  
-  PERFORMANCE_OPTIMIZATIONS.dataSaver = dataSaverEnabled;
-  
   buildSelects();
   updateMapVisibility();
-  applyDataSaverSettings();
   updateLocalNotificationStatus();
   
   buildRoute();
   
   // إضافة بعض الإشعارات النموذجية
-  addNotification('مرحباً بك في Train Alert Pro', 'تم تحميل الموقع بنجاح وجاهز للاستخدام');
   addNotification('نظام محسن للأداء', 'التطبيق يعمل بكفاءة حتى مع الإنترنت الضعيف');
+  addNotification('🚆 Train Alert Pro جاهز للاستخدام', 'اختر محطة القيام والوصول لبدء التتبع');
   
   const obs = new MutationObserver(()=> {
     const active = document.querySelector('.station.active');
@@ -3586,10 +4506,16 @@ function init(){
   
   updateConnectionStatus();
   monitorNetworkQuality();
+  monitorBatteryStatus();
   
   // تحديث حالة النظام بانتظام
   setInterval(updateSystemStatus, 30000);
   updateSystemStatus();
+  
+  // التحقق من حالة الاتصال عند التحميل
+  if (!navigator.onLine) {
+    document.getElementById('offlineIndicator').classList.add('show');
+  }
 }
 
 window.addEventListener('load', init);
@@ -3621,6 +4547,67 @@ window.addEventListener('focus', () => {
     showToast('التتبع يعمل في تبويب آخر');
   }
 });
+
+// تفعيل Service Worker للعمل بدون إنترنت
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('data:text/javascript,' + encodeURIComponent(`
+      self.addEventListener('install', event => {
+        self.skipWaiting();
+      });
+      
+      self.addEventListener('activate', event => {
+        event.waitUntil(clients.claim());
+      });
+      
+      self.addEventListener('push', event => {
+        const options = {
+          body: event.data ? event.data.text() : 'Train Alert Pro',
+          icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"%3E%3Cdefs%3E%3ClinearGradient id="a" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23c9a84a"/%3E%3Cstop offset="100%25" style="stop-color:%23e0c77b"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="32" height="32" rx="6" fill="%230b0f12"/%3E%3Crect x="4" y="4" width="24" height="24" rx="4" fill="url(%23a)"/%3E%3Ctext x="16" y="22" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="%230b0f12"%3ESN%3C/text%3E%3C/svg%3E',
+          badge: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"%3E%3Cdefs%3E%3ClinearGradient id="a" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23c9a84a"/%3E%3Cstop offset="100%25" style="stop-color:%23e0c77b"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="32" height="32" rx="6" fill="%230b0f12"/%3E%3Crect x="4" y="4" width="24" height="24" rx="4" fill="url(%23a)"/%3E%3Ctext x="16" y="22" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="%230b0f12"%3ESN%3C/text%3E%3C/svg%3E',
+          tag: 'train-alert',
+          requireInteraction: true,
+          actions: [
+            { action: 'open', title: 'فتح التطبيق' },
+            { action: 'dismiss', title: 'تجاهل' }
+          ]
+        };
+        
+        event.waitUntil(
+          self.registration.showNotification('Train Alert Pro', options)
+        );
+      });
+      
+      self.addEventListener('notificationclick', event => {
+        event.notification.close();
+        
+        if (event.action === 'open') {
+          event.waitUntil(
+            clients.matchAll({ type: 'window' }).then(clientList => {
+              for (let i = 0; i < clientList.length; i++) {
+                const client = clientList[i];
+                if (client.url === '/' && 'focus' in client) {
+                  return client.focus();
+                }
+              }
+              if (clients.openWindow) {
+                return clients.openWindow('/');
+              }
+            })
+          );
+        }
+      });
+    `))
+    .then(registration => {
+      console.log('ServiceWorker registration successful');
+      document.getElementById('debugServiceWorker').textContent = 'مسجل';
+    })
+    .catch(err => {
+      console.log('ServiceWorker registration failed: ', err);
+      document.getElementById('debugServiceWorker').textContent = 'فشل التسجيل';
+    });
+  });
+}
 </script>
 </body>
 </html>
