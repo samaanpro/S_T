@@ -771,6 +771,49 @@ input:checked + .toggle-slider:before {
   cursor: pointer;
   font-weight: bold;
 }
+
+/* Telegram notification styling */
+.telegram-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(0,136,204,0.1);
+  color: #0088cc;
+}
+
+.telegram-status.connected {
+  background: rgba(0,136,204,0.1);
+  color: #0088cc;
+}
+
+.telegram-status.disconnected {
+  background: rgba(244,67,54,0.1);
+  color: var(--danger);
+}
+
+.telegram-status::before {
+  content: "📱";
+}
+
+.telegram-test-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(0,136,204,0.2);
+  color: #0088cc;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.telegram-test-btn:hover {
+  background: rgba(0,136,204,0.3);
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -802,6 +845,7 @@ input:checked + .toggle-slider:before {
       <nav class="header-nav">
         <a href="#" class="nav-link about" id="aboutLink">حول التطبيق</a>
         <div class="network-status" id="networkStatus">اتصال ممتاز</div>
+        <div class="telegram-status" id="telegramStatus">تيليجرام</div>
       </nav>
     </div>
   </header>
@@ -829,6 +873,7 @@ input:checked + .toggle-slider:before {
         <li>تصميم متجاوب يعمل على جميع الأجهزة</li>
         <li>نظام تخزين محلي آمن للبيانات</li>
         <li>استهلاك منخفض للبطارية والبيانات</li>
+        <li>إشعارات فورية عبر تيليجرام</li>
       </ul>
 
       <div class="performance-info">
@@ -919,6 +964,32 @@ input:checked + .toggle-slider:before {
           <input type="checkbox" id="dataSaverToggle" checked>
           <span class="toggle-slider"></span>
         </label>
+      </div>
+    </div>
+    
+    <div class="sidebar-section">
+      <h3>إعدادات تيليجرام</h3>
+      
+      <div class="sidebar-option">
+        <span>تفعيل إشعارات تيليجرام</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="telegramToggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      
+      <div class="input-group" style="margin-top: 10px">
+        <label>معرف الدردشة (Chat ID)</label>
+        <input type="text" id="telegramChatId" class="input-field" placeholder="أدخل معرف الدردشة الخاص بك" style="padding: 10px 14px; font-size: 14px">
+      </div>
+      
+      <div style="margin-top: 10px; display: flex; gap: 8px">
+        <button id="saveTelegramBtn" class="btn" style="flex: 1; padding: 8px">حفظ</button>
+        <button id="testTelegramBtn" class="telegram-test-btn" style="flex: 1">اختبار</button>
+      </div>
+      
+      <div class="small" style="margin-top: 8px; color: var(--muted)">
+        للحصول على معرف الدردشة: أرسل رسالة إلى بوت <a href="https://t.me/userinfobot" target="_blank" style="color: var(--gold)">@userinfobot</a>
       </div>
     </div>
     
@@ -1170,6 +1241,13 @@ let trackingState = {
   email: ''
 };
 
+// Telegram settings
+let telegramSettings = {
+  enabled: false,
+  botToken: '8349128050:AAEjdg_9b4Frtxxf0SuDoOliB6rkW73GoYQ',
+  chatId: ''
+};
+
 // Notifications array
 let notifications = [];
 
@@ -1278,7 +1356,70 @@ function updateConnectionStatus() {
   }
 }
 
-/* Helpers محسنة للأداء */
+/* Telegram notification functions */
+function updateTelegramStatus() {
+  const telegramStatus = document.getElementById('telegramStatus');
+  if (telegramSettings.enabled && telegramSettings.chatId) {
+    telegramStatus.textContent = 'تيليجرام متصل';
+    telegramStatus.className = 'telegram-status connected';
+  } else {
+    telegramStatus.textContent = 'تيليجرام';
+    telegramStatus.className = 'telegram-status disconnected';
+  }
+}
+
+function sendTelegramNotification(title, message) {
+  if (!telegramSettings.enabled || !telegramSettings.chatId) {
+    return Promise.resolve(false);
+  }
+  
+  const url = `https://api.telegram.org/bot${telegramSettings.botToken}/sendMessage`;
+  const payload = {
+    chat_id: telegramSettings.chatId,
+    text: `🚆 *Train Alert Pro*\n\n*${title}*\n${message}`,
+    parse_mode: 'Markdown'
+  };
+  
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to send Telegram notification');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Telegram notification sent:', data);
+    return true;
+  })
+  .catch(error => {
+    console.error('Error sending Telegram notification:', error);
+    showToast('فشل إرسال إشعار تيليجرام');
+    return false;
+  });
+}
+
+function testTelegramNotification() {
+  if (!telegramSettings.chatId) {
+    showToast('يرجى إدخال معرف الدردشة أولاً');
+    return;
+  }
+  
+  showToast('جاري إرسال رسالة اختبار...');
+  sendTelegramNotification('رسالة اختبار', 'هذه رسالة اختبار من تطبيق Train Alert Pro')
+    .then(success => {
+      if (success) {
+        showToast('تم إرسال رسالة الاختبار بنجاح');
+      }
+    });
+}
+
+/* Helpers محسنة */
 function toRad(v){ return v * Math.PI / 180; }
 
 // دالة Haversine محسنة
@@ -1691,6 +1832,14 @@ function preWarnAction(station, km){
   playBeep(1200,160);
   addNotification(`قبل محطتين - ${station.name}`, `تبقى حوالي ${km.toFixed(2)} كم`);
   
+  // إرسال إشعار تيليجرام
+  if (telegramSettings.enabled) {
+    sendTelegramNotification(
+      `⚠️ تحذير قبل محطتين`, 
+      `القطار يقترب من محطة ${station.name}\nالمسافة المتبقية: ${km.toFixed(2)} كم`
+    );
+  }
+  
   const el = document.querySelector(`.station[data-idx="${STATIONS.indexOf(station)}"]`);
   if(el) {
     el.animate([
@@ -1704,6 +1853,14 @@ function preWarnAction(station, km){
 function arrivalAction(station){
   startRing();
   addNotification(`وصلت تقريباً - ${station.name}`, 'تأكد من متعلقاتك وانزل بأمان');
+  
+  // إرسال إشعار تيليجرام
+  if (telegramSettings.enabled) {
+    sendTelegramNotification(
+      `🚉 وصول إلى المحطة`, 
+      `لقد وصلت إلى محطة ${station.name}\nتأكد من متعلقاتك وانزل بأمان`
+    );
+  }
   
   setTimeout(()=> {
     const ok = confirm(`وصلت إلى ${station.name}. اضغط OK لإيقاف التنبيه.`);
@@ -1799,6 +1956,16 @@ function startTracking(){
   
   updateTrackingStatusInfo('التتبع نشط - يتم تتبع موقعك');
   
+  // إرسال إشعار تيليجرام عند بدء التتبع
+  if (telegramSettings.enabled) {
+    const startStation = STATIONS[trackingState.startIdx].name;
+    const destStation = STATIONS[trackingState.destIdx].name;
+    sendTelegramNotification(
+      `🚀 بدء التتبع`, 
+      `تم بدء تتبع الرحلة من ${startStation} إلى ${destStation}`
+    );
+  }
+  
   if('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied'){
     Notification.requestPermission().then(p => {
       if (p === 'granted') {
@@ -1868,6 +2035,14 @@ function stopTracking(){
   trackingText.textContent = 'ابدأ التتبع';
   
   updateTrackingStatusInfo('التتبع غير نشط');
+  
+  // إرسال إشعار تيليجرام عند إيقاف التتبع
+  if (telegramSettings.enabled) {
+    sendTelegramNotification(
+      `⏹️ إيقاف التتبع`, 
+      `تم إيقاف تتبع الرحلة`
+    );
+  }
   
   isMainTab = false;
 }
@@ -2005,6 +2180,29 @@ document.getElementById('dataSaverToggle').addEventListener('change', (e) => {
   showToast(e.target.checked ? 'تم تفعيل وضع توفير البيانات' : 'تم إيقاف وضع توفير البيانات');
 });
 
+// Telegram settings
+document.getElementById('telegramToggle').addEventListener('change', (e) => {
+  telegramSettings.enabled = e.target.checked;
+  localStorage.setItem('telegramEnabled', e.target.checked);
+  updateTelegramStatus();
+  showToast(e.target.checked ? 'تم تفعيل إشعارات تيليجرام' : 'تم إيقاف إشعارات تيليجرام');
+});
+
+document.getElementById('saveTelegramBtn').addEventListener('click', () => {
+  const chatId = document.getElementById('telegramChatId').value.trim();
+  if (!chatId) {
+    showToast('يرجى إدخال معرف الدردشة');
+    return;
+  }
+  
+  telegramSettings.chatId = chatId;
+  localStorage.setItem('telegramChatId', chatId);
+  updateTelegramStatus();
+  showToast('تم حفظ إعدادات تيليجرام');
+});
+
+document.getElementById('testTelegramBtn').addEventListener('click', testTelegramNotification);
+
 // Floating button for quick settings
 document.getElementById('floatingBtn').addEventListener('click', () => {
   const badge = document.getElementById('notificationBadge');
@@ -2045,18 +2243,25 @@ function init(){
   const notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
   const dataSaverEnabled = localStorage.getItem('dataSaverEnabled') !== 'false';
   
+  // تحميل إعدادات تيليجرام
+  telegramSettings.enabled = localStorage.getItem('telegramEnabled') === 'true';
+  telegramSettings.chatId = localStorage.getItem('telegramChatId') || '';
+  
   document.getElementById('soundToggle').checked = soundEnabled;
   document.getElementById('vibrationToggle').checked = vibrationEnabled;
   document.getElementById('notificationsToggle').checked = notificationsEnabled;
   document.getElementById('darkModeToggle').checked = savedTheme === 'dark';
   document.getElementById('mapToggleSetting').checked = mapVisible;
   document.getElementById('dataSaverToggle').checked = dataSaverEnabled;
+  document.getElementById('telegramToggle').checked = telegramSettings.enabled;
+  document.getElementById('telegramChatId').value = telegramSettings.chatId;
   
   PERFORMANCE_OPTIMIZATIONS.dataSaver = dataSaverEnabled;
   
   buildSelects();
   updateMapVisibility();
   applyDataSaverSettings();
+  updateTelegramStatus();
   
   buildRoute();
   
