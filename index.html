@@ -814,65 +814,6 @@ input:checked + .toggle-slider:before {
 .telegram-test-btn:hover {
   background: rgba(0,136,204,0.3);
 }
-
-/* Arrival notification animation */
-.arrival-notification {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--card);
-  border-radius: 16px;
-  padding: 30px;
-  max-width: 400px;
-  width: 90%;
-  z-index: 1002;
-  box-shadow: var(--shadow-2);
-  display: none;
-  text-align: center;
-  animation: slideDown 0.5s ease-out;
-}
-
-.arrival-notification.active {
-  display: block;
-}
-
-.arrival-notification h2 {
-  color: var(--gold);
-  margin-bottom: 15px;
-  font-size: 24px;
-}
-
-.arrival-notification p {
-  margin-bottom: 20px;
-  color: var(--text);
-}
-
-.arrival-notification .arrival-icon {
-  font-size: 60px;
-  margin-bottom: 20px;
-  animation: bounce 1s infinite;
-}
-
-@keyframes slideDown {
-  from {
-    transform: translate(-50%, -70%);
-    opacity: 0;
-  }
-  to {
-    transform: translate(-50%, -50%);
-    opacity: 1;
-  }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
 </style>
 </head>
 <body data-theme="dark">
@@ -1038,8 +979,8 @@ input:checked + .toggle-slider:before {
       </div>
       
       <div class="input-group" style="margin-top: 10px">
-        <label>رقم التليجرام (بدون +)</label>
-        <input type="text" id="telegramChatId" class="input-field" placeholder="أدخل رقم التليجرام الخاص بك" style="padding: 10px 14px; font-size: 14px">
+        <label>معرف الدردشة (Chat ID)</label>
+        <input type="text" id="telegramChatId" class="input-field" placeholder="أدخل معرف الدردشة الخاص بك" style="padding: 10px 14px; font-size: 14px">
       </div>
       
       <div style="margin-top: 10px; display: flex; gap: 8px">
@@ -1048,7 +989,7 @@ input:checked + .toggle-slider:before {
       </div>
       
       <div class="small" style="margin-top: 8px; color: var(--muted)">
-        ملاحظة: أدخل رقم التليجرام الخاص بك (بدون علامة +)
+        للحصول على معرف الدردشة: أرسل رسالة إلى بوت <a href="https://t.me/userinfobot" target="_blank" style="color: var(--gold)">@userinfobot</a>
       </div>
     </div>
     
@@ -1156,15 +1097,6 @@ input:checked + .toggle-slider:before {
   </div>
 
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-
-  <!-- Arrival Notification Modal -->
-  <div class="arrival-notification" id="arrivalNotification">
-    <div class="arrival-icon">🚉</div>
-    <h2>لقد وصلت إلى المحطة!</h2>
-    <p id="arrivalStationName">اسم المحطة</p>
-    <p>تأكد من متعلقاتك وانزل بأمان</p>
-    <button id="closeArrivalNotification" class="btn">موافق</button>
-  </div>
 
 <script>
 // تحسينات الأداء للإنترنت الخفيف
@@ -1309,11 +1241,11 @@ let trackingState = {
   email: ''
 };
 
-// Telegram settings - تم تعديل المعرف لاستخدام رقم التليجرام
+// Telegram settings
 let telegramSettings = {
   enabled: false,
   botToken: '8349128050:AAEjdg_9b4Frtxxf0SuDoOliB6rkW73GoYQ',
-  chatId: '' // سيتم تعبئته برقم التليجرام
+  chatId: ''
 };
 
 // Notifications array
@@ -1474,7 +1406,7 @@ function sendTelegramNotification(title, message) {
 
 function testTelegramNotification() {
   if (!telegramSettings.chatId) {
-    showToast('يرجى إدخال رقم التليجرام أولاً');
+    showToast('يرجى إدخال معرف الدردشة أولاً');
     return;
   }
   
@@ -1568,33 +1500,6 @@ function stopRing(){
     clearInterval(ringTimer); 
     ringTimer = null; 
   } 
-}
-
-// تم تعديل دالة الوصول للمحطة لتغيير الشعار الذي يرن
-function arrivalAction(station){
-  startRing();
-  addNotification(`وصلت تقريباً - ${station.name}`, 'تأكد من متعلقاتك وانزل بأمان');
-  
-  // إرسال إشعار تيليجرام
-  if (telegramSettings.enabled) {
-    sendTelegramNotification(
-      `🚉 وصول إلى المحطة`, 
-      `لقد وصلت إلى محطة ${station.name}\nتأكد من متعلقاتك وانزل بأمان`
-    );
-  }
-  
-  // عرض نافذة إشعار الوصول مع شعار محطة القطار
-  const arrivalNotification = document.getElementById('arrivalNotification');
-  const arrivalStationName = document.getElementById('arrivalStationName');
-  arrivalStationName.textContent = station.name;
-  arrivalNotification.classList.add('active');
-  
-  // لا نحتاج إلى تأكيد من المستخدم بعد الآن
-  setTimeout(() => {
-    arrivalNotification.classList.remove('active');
-    stopRing();
-    arrivedFlag = false;
-  }, 5000);
 }
 
 /* Map init مع تحسينات الأداء */
@@ -1945,6 +1850,24 @@ function preWarnAction(station, km){
   }
 }
 
+function arrivalAction(station){
+  startRing();
+  addNotification(`وصلت تقريباً - ${station.name}`, 'تأكد من متعلقاتك وانزل بأمان');
+  
+  // إرسال إشعار تيليجرام
+  if (telegramSettings.enabled) {
+    sendTelegramNotification(
+      `🚉 وصول إلى المحطة`, 
+      `لقد وصلت إلى محطة ${station.name}\nتأكد من متعلقاتك وانزل بأمان`
+    );
+  }
+  
+  setTimeout(()=> {
+    const ok = confirm(`وصلت إلى ${station.name}. اضغط OK لإيقاف التنبيه.`);
+    if(ok){ stopRing(); arrivedFlag = false; }
+  }, 700);
+}
+
 function notify(title, body){
   if('Notification' in window && Notification.permission === 'granted' && document.getElementById('notificationsToggle').checked){
     try{ 
@@ -2268,20 +2191,14 @@ document.getElementById('telegramToggle').addEventListener('change', (e) => {
 document.getElementById('saveTelegramBtn').addEventListener('click', () => {
   const chatId = document.getElementById('telegramChatId').value.trim();
   if (!chatId) {
-    showToast('يرجى إدخال رقم التليجرام');
-    return;
-  }
-  
-  // التحقق من أن الرقم يحتوي على أرقام فقط
-  if (!/^\d+$/.test(chatId)) {
-    showToast('يرجى إدخال رقم تليجرام صحيح (أرقام فقط)');
+    showToast('يرجى إدخال معرف الدردشة');
     return;
   }
   
   telegramSettings.chatId = chatId;
   localStorage.setItem('telegramChatId', chatId);
   updateTelegramStatus();
-  showToast('تم حفظ رقم التليجرام');
+  showToast('تم حفظ إعدادات تيليجرام');
 });
 
 document.getElementById('testTelegramBtn').addEventListener('click', testTelegramNotification);
@@ -2298,13 +2215,6 @@ document.getElementById('floatingBtn').addEventListener('click', () => {
 document.getElementById('retryMapBtn').addEventListener('click', () => {
   document.getElementById('mapError').classList.add('hidden');
   initMap();
-});
-
-// Close arrival notification button
-document.getElementById('closeArrivalNotification').addEventListener('click', () => {
-  document.getElementById('arrivalNotification').classList.remove('active');
-  stopRing();
-  arrivedFlag = false;
 });
 
 /* Init app */
