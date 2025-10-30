@@ -1974,15 +1974,15 @@ input:checked + .toggle-slider:before {
   to { opacity: 1; }
 }
 
-/* أنماط نافذة الوصول مع الشعار */
-.arrival-dialog {
+/* أنماط النافذة المبسطة للوصول */
+.arrival-dialog-simple {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.95);
-  z-index: 10007;
+  z-index: 10008;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1991,15 +1991,15 @@ input:checked + .toggle-slider:before {
   transition: all 0.3s ease;
 }
 
-.arrival-dialog.show {
+.arrival-dialog-simple.show {
   opacity: 1;
   visibility: visible;
 }
 
-.arrival-dialog-content {
+.arrival-dialog-content-simple {
   background: var(--card);
   border-radius: 20px;
-  max-width: 500px;
+  max-width: 400px;
   width: 90%;
   box-shadow: var(--shadow-2);
   border: 3px solid var(--danger);
@@ -2008,28 +2008,28 @@ input:checked + .toggle-slider:before {
   transition: transform 0.3s ease;
 }
 
-.arrival-dialog.show .arrival-dialog-content {
+.arrival-dialog-simple.show .arrival-dialog-content-simple {
   transform: scale(1);
 }
 
-.arrival-dialog-header {
+.arrival-header-simple {
   background: var(--gradient-1);
-  padding: 20px;
+  padding: 25px 20px;
   text-align: center;
   position: relative;
 }
 
-.arrival-logo {
+.arrival-logo-simple {
   margin: 0 auto 15px;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
 }
 
-.arrival-logo .logo-sn {
+.arrival-logo-simple .logo-sn-simple {
   width: 100%;
   height: 100%;
   background: var(--gradient-1);
-  border-radius: 16px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2039,145 +2039,127 @@ input:checked + .toggle-slider:before {
   animation: pulse 1.5s infinite ease-in-out;
 }
 
-.arrival-logo .sn-text {
+.arrival-logo-simple .sn-text-simple {
   font-weight: 900;
-  font-size: 32px;
+  font-size: 40px;
   color: #07120b;
   position: relative;
   z-index: 2;
 }
 
-.arrival-logo .train-icon {
+.arrival-logo-simple .train-icon-simple {
   position: absolute;
-  bottom: 5px;
-  right: 5px;
-  font-size: 16px;
+  bottom: 8px;
+  right: 8px;
+  font-size: 20px;
   color: #07120b;
   opacity: 0.8;
 }
 
-.arrival-title {
+.arrival-title-simple {
   color: #07120b;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 900;
   margin: 0;
 }
 
-.arrival-dialog-body {
-  padding: 25px;
+.arrival-body-simple {
+  padding: 30px 25px;
   text-align: center;
 }
 
-.station-info {
+.station-name-simple {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.arrival-time-simple {
+  font-size: 18px;
+  color: var(--muted);
   margin-bottom: 20px;
 }
 
-.station-name {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 5px;
-}
-
-.arrival-time {
-  font-size: 16px;
-  color: var(--muted);
-}
-
-.arrival-message {
+.arrival-message-simple {
   background: rgba(244, 67, 54, 0.1);
   border: 1px solid var(--danger);
   border-radius: 12px;
-  padding: 15px;
+  padding: 20px;
   margin-bottom: 25px;
 }
 
-.arrival-message p {
-  margin: 5px 0;
-  font-size: 16px;
+.arrival-message-simple p {
+  margin: 8px 0;
+  font-size: 18px;
   color: var(--text);
 }
 
-.arrival-message p:first-child {
+.arrival-message-simple p:first-child {
   font-weight: 700;
   color: var(--danger);
-  font-size: 18px;
+  font-size: 20px;
 }
 
-.arrival-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.arrival-btn {
+.arrival-btn-simple {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-radius: 10px;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 25px;
+  border-radius: 12px;
   border: none;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
   transition: var(--transition);
-}
-
-.arrival-btn.confirm-btn {
   background: var(--danger);
   color: white;
   box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
 }
 
-.arrival-btn.confirm-btn:hover {
+.arrival-btn-simple:hover {
   background: #d32f2f;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
 }
 
-.arrival-btn.dismiss-btn {
-  background: transparent;
-  border: 2px solid var(--muted);
-  color: var(--muted);
-}
-
-.arrival-btn.dismiss-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--text);
-  color: var(--text);
+.arrival-btn-simple:active {
+  transform: translateY(0);
 }
 
 /* تحسينات للعرض على الجوال */
 @media (max-width: 600px) {
-  .arrival-dialog-content {
+  .arrival-dialog-content-simple {
     width: 95%;
     margin: 20px;
   }
   
-  .arrival-logo {
-    width: 60px;
-    height: 60px;
+  .arrival-logo-simple {
+    width: 80px;
+    height: 80px;
   }
   
-  .arrival-logo .sn-text {
+  .arrival-logo-simple .sn-text-simple {
+    font-size: 32px;
+  }
+  
+  .arrival-title-simple {
+    font-size: 28px;
+  }
+  
+  .station-name-simple {
     font-size: 24px;
   }
   
-  .arrival-title {
-    font-size: 24px;
+  .arrival-body-simple {
+    padding: 25px 20px;
   }
   
-  .station-name {
-    font-size: 20px;
-  }
-  
-  .arrival-actions {
-    flex-direction: column;
-  }
-  
-  .arrival-btn {
-    width: 100%;
-    justify-content: center;
+  .arrival-btn-simple {
+    padding: 16px 20px;
+    font-size: 16px;
   }
 }
 </style>
@@ -3653,45 +3635,37 @@ function stopRing(){
   } 
 }
 
-// دالة جديدة لإظهار إشعار الوصول مع الشعار والصوت العالي
-function showArrivalNotificationWithLogo(station) {
-  // إنشاء نافذة حوارية مخصصة للوصول
+// دالة مبسطة لإشعار الوصول مع الشعار والصوت العالي
+function showArrivalNotificationSimple(station) {
+  // إنشاء نافذة حوارية بسيطة
   const arrivalDialog = document.createElement('div');
-  arrivalDialog.className = 'arrival-dialog';
+  arrivalDialog.className = 'arrival-dialog-simple';
   arrivalDialog.innerHTML = `
-    <div class="arrival-dialog-content">
-      <div class="arrival-dialog-header">
-        <div class="arrival-logo">
-          <div class="logo-sn">
-            <div class="sn-text">SN</div>
-            <div class="train-icon">🚆</div>
+    <div class="arrival-dialog-content-simple">
+      <div class="arrival-header-simple">
+        <div class="arrival-logo-simple">
+          <div class="logo-sn-simple">
+            <div class="sn-text-simple">SN</div>
+            <div class="train-icon-simple">🚆</div>
           </div>
         </div>
-        <h2 class="arrival-title">لقد وصلت!</h2>
+        <h2 class="arrival-title-simple">لقد وصلت!</h2>
       </div>
       
-      <div class="arrival-dialog-body">
-        <div class="station-info">
-          <div class="station-name">${station.name}</div>
-          <div class="arrival-time">${new Date().toLocaleTimeString('ar-EG')}</div>
-        </div>
+      <div class="arrival-body-simple">
+        <div class="station-name-simple">${station.name}</div>
+        <div class="arrival-time-simple">${new Date().toLocaleTimeString('ar-EG')}</div>
         
-        <div class="arrival-message">
+        <div class="arrival-message-simple">
           <p>🚨 تنبيه عاجل 🚨</p>
           <p>أنت الآن في محطة الوجهة</p>
           <p>تأكد من متعلقاتك وانزل بأمان</p>
         </div>
         
-        <div class="arrival-actions">
-          <button id="confirmArrival" class="arrival-btn confirm-btn">
-            <span>✓</span>
-            <span>موافق - إيقاف التتبع</span>
-          </button>
-          <button id="dismissArrival" class="arrival-btn dismiss-btn">
-            <span>✕</span>
-            <span>تجاهل</span>
-          </button>
-        </div>
+        <button id="confirmArrivalSimple" class="arrival-btn-simple">
+          <span>✓</span>
+          <span>موافق - إيقاف التتبع</span>
+        </button>
       </div>
     </div>
   `;
@@ -3712,26 +3686,18 @@ function showArrivalNotificationWithLogo(station) {
     arrivalDialog.classList.add('show');
   }, 100);
   
-  // معالجة النقر على الأزرار
-  document.getElementById('confirmArrival').addEventListener('click', () => {
+  // معالجة النقر على زر الموافق فقط
+  document.getElementById('confirmArrivalSimple').addEventListener('click', () => {
     arrivalDialog.classList.remove('show');
     setTimeout(() => {
       document.body.removeChild(arrivalDialog);
     }, 300);
     
+    // إيقاف التتبع فوراً
     userConfirmedArrival = true;
     stopContinuousNotifications();
     stopTracking();
     showToast('تم تأكيد الوصول وإيقاف التتبع');
-  });
-  
-  document.getElementById('dismissArrival').addEventListener('click', () => {
-    arrivalDialog.classList.remove('show');
-    setTimeout(() => {
-      document.body.removeChild(arrivalDialog);
-    }, 300);
-    
-    showToast('تم تجاهل إشعار الوصول');
   });
   
   // إرسال إشعار محلي أيضاً
@@ -3747,7 +3713,7 @@ function showArrivalNotificationWithLogo(station) {
     `لقد وصلت إلى محطة ${station.name} - تأكد من متعلقاتك`
   );
   
-  // بدء إشعارات مستمرة كل 30 ثانية إذا لم يتم التأكيد
+  // بدء إشعارات مستمرة كل 30 ثانية
   if (localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !continuousNotificationInterval) {
     continuousNotificationInterval = setInterval(() => {
       if (isTracking && localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !userConfirmedArrival) {
@@ -3843,15 +3809,15 @@ function playHighVolumeArrivalSound() {
   }
 }
 
-// تعديل دالة الوصول لاستخدام النافذة الجديدة
+// تعديل دالة الوصول لاستخدام النافذة المبسطة
 function arrivalAction(station){
   console.log('وصول إلى المحطة:', station.name);
   
   arrivedFlag = true;
   arrivalNotificationShown = true;
   
-  // استخدام النافذة الجديدة مع الشعار والصوت العالي
-  showArrivalNotificationWithLogo(station);
+  // استخدام النافذة المبسطة مع الشعار والصوت العالي
+  showArrivalNotificationSimple(station);
 }
 
 // دالة محسنة للوصول مع إشعار صوتي عالي
