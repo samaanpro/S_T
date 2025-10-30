@@ -289,7 +289,6 @@ body{position:relative}
     text-align: center;
   }
   
-  /* تحسينات لعرض مؤشرات الحالة في الموبايل */
   .header-nav {
     flex-direction: column;
     gap: 8px;
@@ -1876,6 +1875,311 @@ input:checked + .toggle-slider:before {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
+
+/* تحسينات للإشعارات القوية */
+.high-volume-notification {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 10006;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.high-volume-notification.active {
+  display: flex;
+}
+
+.high-volume-content {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow-2);
+  border: 3px solid var(--danger);
+  animation: slideDown 0.5s ease-out;
+}
+
+.high-volume-icon {
+  font-size: 100px;
+  margin-bottom: 20px;
+  animation: urgentPulse 1s infinite;
+}
+
+.high-volume-title {
+  color: var(--danger);
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 15px;
+}
+
+.high-volume-body {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+.high-volume-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.high-volume-btn {
+  padding: 15px 30px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 18px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.high-volume-confirm {
+  background: var(--danger);
+  color: white;
+  box-shadow: 0 4px 15px rgba(244,67,54,0.3);
+}
+
+.high-volume-confirm:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(244,67,54,0.4);
+}
+
+.high-volume-dismiss {
+  background: transparent;
+  border: 2px solid var(--muted);
+  color: var(--muted);
+}
+
+.high-volume-dismiss:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--text);
+  color: var(--text);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* أنماط نافذة الوصول مع الشعار */
+.arrival-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 10007;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.arrival-dialog.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.arrival-dialog-content {
+  background: var(--card);
+  border-radius: 20px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: var(--shadow-2);
+  border: 3px solid var(--danger);
+  overflow: hidden;
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+.arrival-dialog.show .arrival-dialog-content {
+  transform: scale(1);
+}
+
+.arrival-dialog-header {
+  background: var(--gradient-1);
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.arrival-logo {
+  margin: 0 auto 15px;
+  width: 80px;
+  height: 80px;
+}
+
+.arrival-logo .logo-sn {
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-1);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-gold);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.arrival-logo .sn-text {
+  font-weight: 900;
+  font-size: 32px;
+  color: #07120b;
+  position: relative;
+  z-index: 2;
+}
+
+.arrival-logo .train-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 16px;
+  color: #07120b;
+  opacity: 0.8;
+}
+
+.arrival-title {
+  color: #07120b;
+  font-size: 28px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.arrival-dialog-body {
+  padding: 25px;
+  text-align: center;
+}
+
+.station-info {
+  margin-bottom: 20px;
+}
+
+.station-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.arrival-time {
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.arrival-message {
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid var(--danger);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 25px;
+}
+
+.arrival-message p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.arrival-message p:first-child {
+  font-weight: 700;
+  color: var(--danger);
+  font-size: 18px;
+}
+
+.arrival-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.arrival-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.arrival-btn.confirm-btn {
+  background: var(--danger);
+  color: white;
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+}
+
+.arrival-btn.confirm-btn:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+}
+
+.arrival-btn.dismiss-btn {
+  background: transparent;
+  border: 2px solid var(--muted);
+  color: var(--muted);
+}
+
+.arrival-btn.dismiss-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--text);
+  color: var(--text);
+}
+
+/* تحسينات للعرض على الجوال */
+@media (max-width: 600px) {
+  .arrival-dialog-content {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .arrival-logo {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .arrival-logo .sn-text {
+    font-size: 24px;
+  }
+  
+  .arrival-title {
+    font-size: 24px;
+  }
+  
+  .station-name {
+    font-size: 20px;
+  }
+  
+  .arrival-actions {
+    flex-direction: column;
+  }
+  
+  .arrival-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -1958,6 +2262,19 @@ input:checked + .toggle-slider:before {
       <div class="notification-permission-buttons">
         <button id="allowNotificationsBtn" class="allow-btn">السماح بالإشعارات</button>
         <button id="laterNotificationsBtn" class="later-btn">لاحقاً</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- High Volume Notification Modal -->
+  <div class="high-volume-notification" id="highVolumeNotification">
+    <div class="high-volume-content">
+      <div class="high-volume-icon">🚉</div>
+      <h2 class="high-volume-title" id="highVolumeTitle">لقد وصلت!</h2>
+      <p class="high-volume-body" id="highVolumeBody">أنت الآن في محطة الوجهة</p>
+      <div class="high-volume-actions">
+        <button id="highVolumeConfirm" class="high-volume-btn high-volume-confirm">موافق - إيقاف التتبع</button>
+        <button id="highVolumeDismiss" class="high-volume-btn high-volume-dismiss">تجاهل</button>
       </div>
     </div>
   </div>
@@ -2198,6 +2515,17 @@ input:checked + .toggle-slider:before {
             <span class="toggle-slider"></span>
           </label>
         </div>
+        
+        <div class="notification-setting">
+          <div>
+            <div class="notification-setting-label">إشعارات صوتية عالية</div>
+            <div class="notification-setting-description">صوت عالي جداً عند الوصول للمحطة</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="highVolumeNotificationsToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
       </div>
       
       <div style="margin-top: 10px; display: flex; gap: 8px">
@@ -2239,6 +2567,7 @@ input:checked + .toggle-slider:before {
           <button id="testNormalNotificationBtn" class="test-notification-btn">عادي</button>
           <button id="testWarningNotificationBtn" class="test-notification-btn warning">تحذير</button>
           <button id="testArrivalNotificationBtn" class="test-notification-btn arrival">وصول</button>
+          <button id="testHighVolumeNotificationBtn" class="test-notification-btn" style="background: var(--danger); color: white;">صوت عالي</button>
           <button id="testEnhancedNotificationBtn" class="test-notification-btn" style="background: var(--accent); color: white;">معزز</button>
         </div>
       </div>
@@ -2488,13 +2817,14 @@ let localNotificationSettings = {
   arrivalNotifications: true,
   warningNotifications: true,
   continuousNotifications: true,
-  enhancedNotifications: true
+  enhancedNotifications: true,
+  highVolumeNotifications: true
 };
 
 // سجل الإشعارات
 let notificationHistory = [];
 
-/* Stations EXACT ORDER provided by you */
+/* Stations EXACT ORDER provided by you - مع تحسين الإحداثيات */
 const STATIONS = [
   { name:"الإسكندرية", lat:31.2001, lng:29.9187 },
   { name:"سيدي جابر", lat:31.2058, lng:29.9417 },
@@ -2511,10 +2841,10 @@ const STATIONS = [
   { name:"ديروط", lat:27.3000, lng:31.4000 },
   { name:"اسيوط", lat:27.1783, lng:31.1858 },
   { name:"طما", lat:26.9500, lng:31.8000 },
-  { name:"طهتا", lat:26.5700, lng:31.6700 },
+  { name:"طهطا", lat:26.5700, lng:31.6700 }, // تم تصحيح الاسم من "طهتا" إلى "طهطا"
   { name:"سوهاج", lat:26.5560, lng:31.6956 },
   { name:"جرجا", lat:26.2165, lng:31.5294 },
-  { name:"البلينا", lat:26.2500, lng:32.3000 },
+  { name:"البلينا", lat:26.2425, lng:32.2850 }, // إحداثيات محسنة بدقة
   { name:"نجع حمادي", lat:26.1803, lng:31.6958 },
   { name:"قنا", lat:26.1553, lng:32.7160 },
   { name:"قوص", lat:25.9470, lng:32.7180 },
@@ -2578,6 +2908,15 @@ let gpsImprovementInterval = null;
 // متغيرات لتتبع حالة البطارية
 let batteryLevel = null;
 let batteryCharging = null;
+
+// متغيرات للتحقق من دقة الوصول للمحطات
+let stationProximityCheck = {
+  lastCheckTime: 0,
+  checkInterval: 5000, // 5 ثوانٍ بين كل فحص
+  arrivalThreshold: 0.3, // 300 متر كعتبة للوصول
+  confirmationThreshold: 0.15, // 150 متر للتأكيد
+  confirmedStations: new Set() // المحطات التي تم تأكيد الوصول إليها
+};
 
 /* مراقبة جودة الشبكة */
 function monitorNetworkQuality() {
@@ -2977,6 +3316,140 @@ function sendEnhancedNotification(title, body, icon = '🔔', options = {}) {
   return true;
 }
 
+// دالة لإرسال إشعار صوتي عالي
+function sendHighVolumeNotification(title, body, station) {
+  if (!localNotificationSettings.enabled || !localNotificationSettings.highVolumeNotifications) {
+    console.log('الإشعارات الصوتية العالية غير مفعلة');
+    return false;
+  }
+  
+  // عرض نافذة الإشعار الصوتي العالي
+  const highVolumeNotification = document.getElementById('highVolumeNotification');
+  const highVolumeTitle = document.getElementById('highVolumeTitle');
+  const highVolumeBody = document.getElementById('highVolumeBody');
+  const confirmBtn = document.getElementById('highVolumeConfirm');
+  const dismissBtn = document.getElementById('highVolumeDismiss');
+  
+  highVolumeTitle.textContent = title;
+  highVolumeBody.textContent = body;
+  
+  // إزالة مستمعي الأحداث القديمة
+  const newConfirmBtn = confirmBtn.cloneNode(true);
+  const newDismissBtn = dismissBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+  dismissBtn.parentNode.replaceChild(newDismissBtn, dismissBtn);
+  
+  // إضافة مستمعي أحداث جديدة
+  newConfirmBtn.addEventListener('click', () => {
+    highVolumeNotification.classList.remove('active');
+    userConfirmedArrival = true;
+    stopContinuousNotifications();
+    stopTracking();
+    showToast('تم تأكيد الوصول وإيقاف التتبع');
+  });
+  
+  newDismissBtn.addEventListener('click', () => {
+    highVolumeNotification.classList.remove('active');
+    showToast('تم تجاهل إشعار الوصول');
+  });
+  
+  highVolumeNotification.classList.add('active');
+  
+  // تشغيل صوت عالي جداً
+  playHighVolumeSound();
+  
+  // تشغيل اهتزاز قوي
+  if (document.getElementById('vibrationToggle').checked) {
+    navigator.vibrate && navigator.vibrate([500, 200, 500, 200, 500]);
+  }
+  
+  // إرسال إشعار محلي أيضاً
+  sendLocalNotification(
+    title, 
+    body,
+    { urgent: true, sound: false, vibrate: false }
+  );
+  
+  // إضافة إلى سجل الإشعارات
+  addToNotificationHistory(title, body);
+  
+  // بدء إشعارات مستمرة كل 30 ثانية
+  if (localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !continuousNotificationInterval) {
+    continuousNotificationInterval = setInterval(() => {
+      if (isTracking && localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !userConfirmedArrival) {
+        // إعادة عرض الإشعار الصوتي العالي
+        sendHighVolumeNotification(title, body, station);
+      }
+    }, 30000); // كل 30 ثانية
+  }
+  
+  return true;
+}
+
+// دالة لتشغيل صوت عالي جداً
+function playHighVolumeSound() {
+  try {
+    ensureAudio();
+    if (!audioCtx) {
+      if (document.getElementById('vibrationToggle').checked) {
+        navigator.vibrate && navigator.vibrate([500, 200, 500]);
+      }
+      return;
+    }
+    if (!document.getElementById('soundToggle').checked) return;
+    
+    // إنشاء نغمة عالية ومتكررة
+    const playSequence = () => {
+      const o1 = audioCtx.createOscillator();
+      const g1 = audioCtx.createGain();
+      o1.type = 'sine';
+      o1.frequency.value = 800;
+      g1.gain.value = 0.3;
+      o1.connect(g1);
+      g1.connect(audioCtx.destination);
+      o1.start();
+      o1.stop(audioCtx.currentTime + 0.2);
+      
+      setTimeout(() => {
+        const o2 = audioCtx.createOscillator();
+        const g2 = audioCtx.createGain();
+        o2.type = 'sine';
+        o2.frequency.value = 1000;
+        g2.gain.value = 0.4;
+        o2.connect(g2);
+        g2.connect(audioCtx.destination);
+        o2.start();
+        o2.stop(audioCtx.currentTime + 0.3);
+      }, 300);
+      
+      setTimeout(() => {
+        const o3 = audioCtx.createOscillator();
+        const g3 = audioCtx.createGain();
+        o3.type = 'sine';
+        o3.frequency.value = 1200;
+        g3.gain.value = 0.5;
+        o3.connect(g3);
+        g3.connect(audioCtx.destination);
+        o3.start();
+        o3.stop(audioCtx.currentTime + 0.4);
+      }, 700);
+    };
+    
+    // تشغيل التسلسل 3 مرات
+    playSequence();
+    setTimeout(playSequence, 1500);
+    setTimeout(playSequence, 3000);
+    
+    if (document.getElementById('vibrationToggle').checked) {
+      navigator.vibrate && navigator.vibrate([500, 200, 500, 200, 500]);
+    }
+  } catch (e) {
+    if (document.getElementById('vibrationToggle').checked) {
+      navigator.vibrate && navigator.vibrate([500, 200, 500, 200, 500]);
+    }
+  }
+}
+
 // دالة لإضافة إشعار إلى السجل
 function addToNotificationHistory(title, body) {
   const notification = {
@@ -3180,7 +3653,208 @@ function stopRing(){
   } 
 }
 
-// دالة محسنة للوصول مع إشعار معزز
+// دالة جديدة لإظهار إشعار الوصول مع الشعار والصوت العالي
+function showArrivalNotificationWithLogo(station) {
+  // إنشاء نافذة حوارية مخصصة للوصول
+  const arrivalDialog = document.createElement('div');
+  arrivalDialog.className = 'arrival-dialog';
+  arrivalDialog.innerHTML = `
+    <div class="arrival-dialog-content">
+      <div class="arrival-dialog-header">
+        <div class="arrival-logo">
+          <div class="logo-sn">
+            <div class="sn-text">SN</div>
+            <div class="train-icon">🚆</div>
+          </div>
+        </div>
+        <h2 class="arrival-title">لقد وصلت!</h2>
+      </div>
+      
+      <div class="arrival-dialog-body">
+        <div class="station-info">
+          <div class="station-name">${station.name}</div>
+          <div class="arrival-time">${new Date().toLocaleTimeString('ar-EG')}</div>
+        </div>
+        
+        <div class="arrival-message">
+          <p>🚨 تنبيه عاجل 🚨</p>
+          <p>أنت الآن في محطة الوجهة</p>
+          <p>تأكد من متعلقاتك وانزل بأمان</p>
+        </div>
+        
+        <div class="arrival-actions">
+          <button id="confirmArrival" class="arrival-btn confirm-btn">
+            <span>✓</span>
+            <span>موافق - إيقاف التتبع</span>
+          </button>
+          <button id="dismissArrival" class="arrival-btn dismiss-btn">
+            <span>✕</span>
+            <span>تجاهل</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // إضافة النافذة للصفحة
+  document.body.appendChild(arrivalDialog);
+  
+  // تشغيل الصوت العالي فوراً
+  playHighVolumeArrivalSound();
+  
+  // تشغيل اهتزاز قوي
+  if (navigator.vibrate) {
+    navigator.vibrate([500, 200, 500, 200, 500]);
+  }
+  
+  // إضافة تأثيرات بصرية
+  setTimeout(() => {
+    arrivalDialog.classList.add('show');
+  }, 100);
+  
+  // معالجة النقر على الأزرار
+  document.getElementById('confirmArrival').addEventListener('click', () => {
+    arrivalDialog.classList.remove('show');
+    setTimeout(() => {
+      document.body.removeChild(arrivalDialog);
+    }, 300);
+    
+    userConfirmedArrival = true;
+    stopContinuousNotifications();
+    stopTracking();
+    showToast('تم تأكيد الوصول وإيقاف التتبع');
+  });
+  
+  document.getElementById('dismissArrival').addEventListener('click', () => {
+    arrivalDialog.classList.remove('show');
+    setTimeout(() => {
+      document.body.removeChild(arrivalDialog);
+    }, 300);
+    
+    showToast('تم تجاهل إشعار الوصول');
+  });
+  
+  // إرسال إشعار محلي أيضاً
+  sendLocalNotification(
+    `🚉 لقد وصلت إلى ${station.name}!`, 
+    `أنت الآن في محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    { urgent: true, sound: false, vibrate: false }
+  );
+  
+  // إضافة إلى سجل الإشعارات
+  addToNotificationHistory(
+    `🚉 وصول إلى ${station.name}`, 
+    `لقد وصلت إلى محطة ${station.name} - تأكد من متعلقاتك`
+  );
+  
+  // بدء إشعارات مستمرة كل 30 ثانية إذا لم يتم التأكيد
+  if (localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !continuousNotificationInterval) {
+    continuousNotificationInterval = setInterval(() => {
+      if (isTracking && localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !userConfirmedArrival) {
+        // إعادة تشغيل الصوت العالي
+        playHighVolumeArrivalSound();
+        
+        // إعادة تشغيل الاهتزاز
+        if (navigator.vibrate) {
+          navigator.vibrate([500, 200, 500, 200, 500]);
+        }
+      }
+    }, 30000); // كل 30 ثانية
+  }
+}
+
+// دالة جديدة لتشغيل صوت عالي جداً عند الوصول
+function playHighVolumeArrivalSound() {
+  try {
+    ensureAudio();
+    if (!audioCtx) {
+      if (navigator.vibrate) {
+        navigator.vibrate([500, 200, 500]);
+      }
+      return;
+    }
+    if (!document.getElementById('soundToggle').checked) return;
+    
+    // إنشاء تسلسل صوتي عالي ومتكرر للوصول
+    const playArrivalSequence = () => {
+      // نغمة أولى عالية
+      const o1 = audioCtx.createOscillator();
+      const g1 = audioCtx.createGain();
+      o1.type = 'sine';
+      o1.frequency.value = 800;
+      g1.gain.value = 0.3;
+      o1.connect(g1);
+      g1.connect(audioCtx.destination);
+      o1.start();
+      o1.stop(audioCtx.currentTime + 0.3);
+      
+      // نغمة ثانية أعلى
+      setTimeout(() => {
+        const o2 = audioCtx.createOscillator();
+        const g2 = audioCtx.createGain();
+        o2.type = 'sine';
+        o2.frequency.value = 1000;
+        g2.gain.value = 0.4;
+        o2.connect(g2);
+        g2.connect(audioCtx.destination);
+        o2.start();
+        o2.stop(audioCtx.currentTime + 0.4);
+      }, 400);
+      
+      // نغمة ثالثة أعلى
+      setTimeout(() => {
+        const o3 = audioCtx.createOscillator();
+        const g3 = audioCtx.createGain();
+        o3.type = 'sine';
+        o3.frequency.value = 1200;
+        g3.gain.value = 0.5;
+        o3.connect(g3);
+        g3.connect(audioCtx.destination);
+        o3.start();
+        o3.stop(audioCtx.currentTime + 0.5);
+      }, 900);
+      
+      // نغمة رابعة عالية جداً
+      setTimeout(() => {
+        const o4 = audioCtx.createOscillator();
+        const g4 = audioCtx.createGain();
+        o4.type = 'sine';
+        o4.frequency.value = 1500;
+        g4.gain.value = 0.6;
+        o4.connect(g4);
+        g4.connect(audioCtx.destination);
+        o4.start();
+        o4.stop(audioCtx.currentTime + 0.6);
+      }, 1500);
+    };
+    
+    // تشغيل التسلسل 3 مرات مع فترات راحة
+    playArrivalSequence();
+    setTimeout(playArrivalSequence, 2500);
+    setTimeout(playArrivalSequence, 5000);
+    
+    if (navigator.vibrate) {
+      navigator.vibrate([500, 200, 500, 200, 500]);
+    }
+  } catch (e) {
+    if (navigator.vibrate) {
+      navigator.vibrate([500, 200, 500, 200, 500]);
+    }
+  }
+}
+
+// تعديل دالة الوصول لاستخدام النافذة الجديدة
+function arrivalAction(station){
+  console.log('وصول إلى المحطة:', station.name);
+  
+  arrivedFlag = true;
+  arrivalNotificationShown = true;
+  
+  // استخدام النافذة الجديدة مع الشعار والصوت العالي
+  showArrivalNotificationWithLogo(station);
+}
+
+// دالة محسنة للوصول مع إشعار صوتي عالي
 function showArrivalNotification(station) {
   const modal = document.getElementById('arrivalNotificationModal');
   const title = document.getElementById('arrivalNotificationTitle');
@@ -3250,8 +3924,17 @@ function arrivalAction(station){
   arrivedFlag = true;
   arrivalNotificationShown = true;
   
-  // عرض الإشعار المعزز
-  showArrivalNotification(station);
+  // إرسال إشعار صوتي عالي إذا كان مفعلاً
+  if (localNotificationSettings.highVolumeNotifications) {
+    sendHighVolumeNotification(
+      `🚉 لقد وصلت إلى ${station.name}!`, 
+      `أنت الآن في محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+      station
+    );
+  } else {
+    // عرض الإشعار العادي
+    showArrivalNotification(station);
+  }
 }
 
 // دالة لإيقاف الإشعارات المستمرة
@@ -3282,9 +3965,9 @@ function stopContinuousNotifications() {
   arrivedFlag = false;
   userConfirmedArrival = false; // إعادة تعيين تأكيد المستخدم
   
-  // إغلاق نافذة الوصول إذا كانت مفتوحة
-  const arrivalModal = document.getElementById('arrivalNotificationModal');
-  arrivalModal.classList.remove('active');
+  // إغلاق نوافذ الوصول إذا كانت مفتوحة
+  document.getElementById('arrivalNotificationModal').classList.remove('active');
+  document.getElementById('highVolumeNotification').classList.remove('active');
 }
 
 /* Map init مع تحسينات الأداء */
@@ -3515,6 +4198,47 @@ function findNearestStation(lat,lng){
   return { idx, distKm:min };
 }
 
+// دالة محسنة للتحقق من الوصول للمحطة
+function checkStationProximity(lat, lng, accuracy) {
+  const now = Date.now();
+  
+  // التحقق من مرور فترة كافية منذ آخر فحص
+  if (now - stationProximityCheck.lastCheckTime < stationProximityCheck.checkInterval) {
+    return false;
+  }
+  
+  stationProximityCheck.lastCheckTime = now;
+  
+  // البحث عن أقرب محطة
+  const nearest = findNearestStation(lat, lng);
+  const nearestStation = STATIONS[nearest.idx];
+  const distance = nearest.distKm;
+  
+  // التحقق من دقة GPS
+  if (accuracy > 100) {
+    console.log('دقة GPS منخفضة جدًا، يتم تجاهل فحص القرب');
+    return false;
+  }
+  
+  // التحقق من المسافة مع مراعاة دقة GPS
+  const adjustedDistance = distance - (accuracy / 1000); // تحويل الدقة من متر إلى كم
+  
+  // التحقق من الوصول للمحطة
+  if (adjustedDistance <= stationProximityCheck.arrivalThreshold) {
+    // التحقق من أن المحطة هي محطة الوجهة
+    const destIndex = +document.getElementById('destSelect').value;
+    if (nearest.idx === destIndex) {
+      // التحقق من أننا لم نؤكد الوصول لهذه المحطة من قبل
+      if (!stationProximityCheck.confirmedStations.has(nearest.idx)) {
+        stationProximityCheck.confirmedStations.add(nearest.idx);
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
 /* Core update position مع تحسينات الأداء */
 let passedStations = new Set();
 
@@ -3636,10 +4360,10 @@ function updatePosition(lat,lng,accuracy,ts = Date.now()){
     }
   }
 
-  // arrival - تعديل لضمان عمل الإشعارات عند الوصول
+  // arrival - تعديل لضمان عمل الإشعارات عند الوصول مع التحقق المحسن
   if((remaining === 0 || remainingKm <= 0.6) && !arrivedFlag){
-    // التحقق من مرور 30 ثانية على الأقل منذ آخر إشعار وصول
-    if (currentTime - lastArrivalNotificationTime > 30000) {
+    // استخدام دالة التحقق المحسنة للوصول للمحطة
+    if (checkStationProximity(lat, lng, accuracy)) {
       arrivedFlag = true;
       lastArrivalNotificationTime = currentTime;
       arrivalAction(STATIONS[destIndex]);
@@ -3773,6 +4497,10 @@ function startTracking(){
   // إعادة تعيين متغيرات تحسين GPS
   gpsImprovementAttempts = 0;
   stopGPSImprovement();
+  
+  // إعادة تعيين متغيرات التحقق من القرب من المحطات
+  stationProximityCheck.lastCheckTime = 0;
+  stationProximityCheck.confirmedStations.clear();
   
   // تحديث واجهة المستخدم
   const trackingBtn = document.getElementById('trackingBtn');
@@ -4115,6 +4843,22 @@ function testArrivalNotification() {
   showToast('تم إرسال إشعار وصول');
 }
 
+function testHighVolumeNotification() {
+  if (!localNotificationSettings.enabled) {
+    showToast('يرجى تفعيل الإشعارات المحلية أولاً');
+    return;
+  }
+  
+  // إرسال إشعار صوتي عالي
+  sendHighVolumeNotification(
+    '🚉 إشعار صوتي عالي', 
+    `هذا إشعار صوتي عالي للاختبار\n\nسيتم إرسال هذا النوع من الإشعارات عند الوصول للمحطة مع صوت عالي جداً\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    { name: 'محطة اختبار' }
+  );
+  
+  showToast('تم إرسال إشعار صوتي عالي');
+}
+
 function testEnhancedNotification() {
   if (!localNotificationSettings.enabled) {
     showToast('يرجى تفعيل الإشعارات المحلية أولاً');
@@ -4154,6 +4898,7 @@ document.getElementById('overlay').addEventListener('click', () => {
   closeTestModal();
   // إغلاق نافذة الوصول أيضاً
   document.getElementById('arrivalNotificationModal').classList.remove('active');
+  document.getElementById('highVolumeNotification').classList.remove('active');
 });
 
 // Test modal
@@ -4255,12 +5000,19 @@ document.getElementById('enhancedNotificationsToggle').addEventListener('change'
   showToast(e.target.checked ? 'تم تفعيل الإشعارات المعززة' : 'تم إيقاف الإشعارات المعززة');
 });
 
+document.getElementById('highVolumeNotificationsToggle').addEventListener('change', (e) => {
+  localNotificationSettings.highVolumeNotifications = e.target.checked;
+  localStorage.setItem('highVolumeNotificationsEnabled', e.target.checked);
+  showToast(e.target.checked ? 'تم تفعيل الإشعارات الصوتية العالية' : 'تم إيقاف الإشعارات الصوتية العالية');
+});
+
 document.getElementById('testLocalNotificationsBtn').addEventListener('click', testLocalNotifications);
 
 // Test notification buttons
 document.getElementById('testNormalNotificationBtn').addEventListener('click', testNormalNotification);
 document.getElementById('testWarningNotificationBtn').addEventListener('click', testWarningNotification);
 document.getElementById('testArrivalNotificationBtn').addEventListener('click', testArrivalNotification);
+document.getElementById('testHighVolumeNotificationBtn').addEventListener('click', testHighVolumeNotification);
 document.getElementById('testEnhancedNotificationBtn').addEventListener('click', testEnhancedNotification);
 
 // Clear notifications history
@@ -4367,6 +5119,12 @@ function restoreSavedState() {
   if (savedEnhancedNotificationsEnabled !== null) {
     document.getElementById('enhancedNotificationsToggle').checked = savedEnhancedNotificationsEnabled === 'true';
     localNotificationSettings.enhancedNotifications = savedEnhancedNotificationsEnabled === 'true';
+  }
+  
+  const savedHighVolumeNotificationsEnabled = localStorage.getItem('highVolumeNotificationsEnabled');
+  if (savedHighVolumeNotificationsEnabled !== null) {
+    document.getElementById('highVolumeNotificationsToggle').checked = savedHighVolumeNotificationsEnabled === 'true';
+    localNotificationSettings.highVolumeNotifications = savedHighVolumeNotificationsEnabled === 'true';
   }
   
   // استعادة حالة الإعدادات الأخرى
