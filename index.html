@@ -3298,7 +3298,25 @@ function sendEnhancedNotification(title, body, icon = '🔔', options = {}) {
   return true;
 }
 
-// دالة لإرسال إشعار صوتي عالي
+// تعديل دالة الوصول لاستخدام نافذة high-volume-content
+function arrivalAction(station){
+  console.log('وصول إلى المحطة:', station.name);
+  
+  arrivedFlag = true;
+  arrivalNotificationShown = true;
+  
+  // الحصول على محطة البداية من التتبع
+  const startStation = STATIONS[trackingState.startIdx].name;
+  
+  // إرسال إشعار صوتي عالي باستخدام نافذة high-volume-content
+  sendHighVolumeNotification(
+    `🚉 لقد وصلت إلى ${station.name}!`, 
+    `وصلت من ${startStation} إلى ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
+    station
+  );
+}
+
+// تعديل دالة إرسال الإشعار الصوتي العالي
 function sendHighVolumeNotification(title, body, station) {
   if (!localNotificationSettings.enabled || !localNotificationSettings.highVolumeNotifications) {
     console.log('الإشعارات الصوتية العالية غير مفعلة');
@@ -3633,274 +3651,6 @@ function stopRing(){
     clearInterval(ringTimer); 
     ringTimer = null; 
   } 
-}
-
-// دالة مبسطة لإشعار الوصول مع الشعار والصوت العالي
-function showArrivalNotificationSimple(station) {
-  // إنشاء نافذة حوارية بسيطة
-  const arrivalDialog = document.createElement('div');
-  arrivalDialog.className = 'arrival-dialog-simple';
-  arrivalDialog.innerHTML = `
-    <div class="arrival-dialog-content-simple">
-      <div class="arrival-header-simple">
-        <div class="arrival-logo-simple">
-          <div class="logo-sn-simple">
-            <div class="sn-text-simple">SN</div>
-            <div class="train-icon-simple">🚆</div>
-          </div>
-        </div>
-        <h2 class="arrival-title-simple">لقد وصلت!</h2>
-      </div>
-      
-      <div class="arrival-body-simple">
-        <div class="station-name-simple">${station.name}</div>
-        <div class="arrival-time-simple">${new Date().toLocaleTimeString('ar-EG')}</div>
-        
-        <div class="arrival-message-simple">
-          <p>🚨 تنبيه عاجل 🚨</p>
-          <p>أنت الآن في محطة الوجهة</p>
-          <p>تأكد من متعلقاتك وانزل بأمان</p>
-        </div>
-        
-        <button id="confirmArrivalSimple" class="arrival-btn-simple">
-          <span>✓</span>
-          <span>موافق - إيقاف التتبع</span>
-        </button>
-      </div>
-    </div>
-  `;
-  
-  // إضافة النافذة للصفحة
-  document.body.appendChild(arrivalDialog);
-  
-  // تشغيل الصوت العالي فوراً
-  playHighVolumeArrivalSound();
-  
-  // تشغيل اهتزاز قوي
-  if (navigator.vibrate) {
-    navigator.vibrate([500, 200, 500, 200, 500]);
-  }
-  
-  // إضافة تأثيرات بصرية
-  setTimeout(() => {
-    arrivalDialog.classList.add('show');
-  }, 100);
-  
-  // معالجة النقر على زر الموافق فقط
-  document.getElementById('confirmArrivalSimple').addEventListener('click', () => {
-    arrivalDialog.classList.remove('show');
-    setTimeout(() => {
-      document.body.removeChild(arrivalDialog);
-    }, 300);
-    
-    // إيقاف التتبع فوراً
-    userConfirmedArrival = true;
-    stopContinuousNotifications();
-    stopTracking();
-    showToast('تم تأكيد الوصول وإيقاف التتبع');
-  });
-  
-  // إرسال إشعار محلي أيضاً
-  sendLocalNotification(
-    `🚉 لقد وصلت إلى ${station.name}!`, 
-    `أنت الآن في محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-    { urgent: true, sound: false, vibrate: false }
-  );
-  
-  // إضافة إلى سجل الإشعارات
-  addToNotificationHistory(
-    `🚉 وصول إلى ${station.name}`, 
-    `لقد وصلت إلى محطة ${station.name} - تأكد من متعلقاتك`
-  );
-  
-  // بدء إشعارات مستمرة كل 30 ثانية
-  if (localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !continuousNotificationInterval) {
-    continuousNotificationInterval = setInterval(() => {
-      if (isTracking && localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !userConfirmedArrival) {
-        // إعادة تشغيل الصوت العالي
-        playHighVolumeArrivalSound();
-        
-        // إعادة تشغيل الاهتزاز
-        if (navigator.vibrate) {
-          navigator.vibrate([500, 200, 500, 200, 500]);
-        }
-      }
-    }, 30000); // كل 30 ثانية
-  }
-}
-
-// دالة جديدة لتشغيل صوت عالي جداً عند الوصول
-function playHighVolumeArrivalSound() {
-  try {
-    ensureAudio();
-    if (!audioCtx) {
-      if (navigator.vibrate) {
-        navigator.vibrate([500, 200, 500]);
-      }
-      return;
-    }
-    if (!document.getElementById('soundToggle').checked) return;
-    
-    // إنشاء تسلسل صوتي عالي ومتكرر للوصول
-    const playArrivalSequence = () => {
-      // نغمة أولى عالية
-      const o1 = audioCtx.createOscillator();
-      const g1 = audioCtx.createGain();
-      o1.type = 'sine';
-      o1.frequency.value = 800;
-      g1.gain.value = 0.3;
-      o1.connect(g1);
-      g1.connect(audioCtx.destination);
-      o1.start();
-      o1.stop(audioCtx.currentTime + 0.3);
-      
-      // نغمة ثانية أعلى
-      setTimeout(() => {
-        const o2 = audioCtx.createOscillator();
-        const g2 = audioCtx.createGain();
-        o2.type = 'sine';
-        o2.frequency.value = 1000;
-        g2.gain.value = 0.4;
-        o2.connect(g2);
-        g2.connect(audioCtx.destination);
-        o2.start();
-        o2.stop(audioCtx.currentTime + 0.4);
-      }, 400);
-      
-      // نغمة ثالثة أعلى
-      setTimeout(() => {
-        const o3 = audioCtx.createOscillator();
-        const g3 = audioCtx.createGain();
-        o3.type = 'sine';
-        o3.frequency.value = 1200;
-        g3.gain.value = 0.5;
-        o3.connect(g3);
-        g3.connect(audioCtx.destination);
-        o3.start();
-        o3.stop(audioCtx.currentTime + 0.5);
-      }, 900);
-      
-      // نغمة رابعة عالية جداً
-      setTimeout(() => {
-        const o4 = audioCtx.createOscillator();
-        const g4 = audioCtx.createGain();
-        o4.type = 'sine';
-        o4.frequency.value = 1500;
-        g4.gain.value = 0.6;
-        o4.connect(g4);
-        g4.connect(audioCtx.destination);
-        o4.start();
-        o4.stop(audioCtx.currentTime + 0.6);
-      }, 1500);
-    };
-    
-    // تشغيل التسلسل 3 مرات مع فترات راحة
-    playArrivalSequence();
-    setTimeout(playArrivalSequence, 2500);
-    setTimeout(playArrivalSequence, 5000);
-    
-    if (navigator.vibrate) {
-      navigator.vibrate([500, 200, 500, 200, 500]);
-    }
-  } catch (e) {
-    if (navigator.vibrate) {
-      navigator.vibrate([500, 200, 500, 200, 500]);
-    }
-  }
-}
-
-// تعديل دالة الوصول لاستخدام النافذة المبسطة
-function arrivalAction(station){
-  console.log('وصول إلى المحطة:', station.name);
-  
-  arrivedFlag = true;
-  arrivalNotificationShown = true;
-  
-  // استخدام النافذة المبسطة مع الشعار والصوت العالي
-  showArrivalNotificationSimple(station);
-}
-
-// دالة محسنة للوصول مع إشعار صوتي عالي
-function showArrivalNotification(station) {
-  const modal = document.getElementById('arrivalNotificationModal');
-  const title = document.getElementById('arrivalNotificationTitle');
-  const body = document.getElementById('arrivalNotificationBody');
-  const confirmBtn = document.getElementById('confirmArrivalBtn');
-  const cancelBtn = document.getElementById('cancelArrivalBtn');
-  
-  title.textContent = `🚉 لقد وصلت إلى ${station.name}!`;
-  body.textContent = `أنت الآن في محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`;
-  
-  // إزالة مستمعي الأحداث القديمة
-  const newConfirmBtn = confirmBtn.cloneNode(true);
-  const newCancelBtn = cancelBtn.cloneNode(true);
-  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-  cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-  
-  // إضافة مستمعي أحداث جديدة
-  newConfirmBtn.addEventListener('click', () => {
-    modal.classList.remove('active');
-    userConfirmedArrival = true;
-    stopContinuousNotifications();
-    stopTracking();
-    showToast('تم تأكيد الوصول وإيقاف التتبع');
-  });
-  
-  newCancelBtn.addEventListener('click', () => {
-    modal.classList.remove('active');
-    showToast('تم تجاهل إشعار الوصول');
-  });
-  
-  modal.classList.add('active');
-  
-  // تشغيل الرنين والاهتزاز
-  startRing();
-  if (document.getElementById('vibrationToggle').checked) {
-    navigator.vibrate && navigator.vibrate([200, 100, 200, 100, 200]);
-  }
-  
-  // إرسال إشعار محلي أيضاً
-  sendLocalNotification(
-    `🚉 وصول إلى المحطة!`, 
-    `لقد وصلت إلى محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-    { urgent: true, sound: true, vibrate: true }
-  );
-  
-  // إضافة إلى سجل الإشعارات
-  addToNotificationHistory(
-    `🚉 وصول إلى ${station.name}`, 
-    `لقد وصلت إلى محطة ${station.name} - تأكد من متعلقاتك`
-  );
-  
-  // بدء إشعارات مستمرة كل 30 ثانية
-  if (localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !continuousNotificationInterval) {
-    continuousNotificationInterval = setInterval(() => {
-      if (isTracking && localNotificationSettings.enabled && localNotificationSettings.continuousNotifications && !userConfirmedArrival) {
-        // إعادة عرض الإشعار المعزز
-        showArrivalNotification(station);
-      }
-    }, 30000); // كل 30 ثانية
-  }
-}
-
-// تعديل دالة الوصول للمحطة
-function arrivalAction(station){
-  console.log('وصول إلى المحطة:', station.name);
-  
-  arrivedFlag = true;
-  arrivalNotificationShown = true;
-  
-  // إرسال إشعار صوتي عالي إذا كان مفعلاً
-  if (localNotificationSettings.highVolumeNotifications) {
-    sendHighVolumeNotification(
-      `🚉 لقد وصلت إلى ${station.name}!`, 
-      `أنت الآن في محطة ${station.name}\n\n🚨 تنبيه عاجل 🚨\nتأكد من متعلقاتك وانزل بأمان\n\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`,
-      station
-    );
-  } else {
-    // عرض الإشعار العادي
-    showArrivalNotification(station);
-  }
 }
 
 // دالة لإيقاف الإشعارات المستمرة
